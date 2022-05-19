@@ -1,0 +1,64 @@
+apply plugin: 'java-library'
+apply plugin:  'application'
+apply plugin: 'java'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+sourceCompatibility = 16
+repositories {
+    maven {
+        url "https://maven.aliyun.com/repository/central"
+    }
+    maven {
+        url "http://134.64.116.90:8101/nexus/repository/Java4AhdxZZKF/"
+        allowInsecureProtocol = true
+        credentials {
+            username "devzzkf"
+            password "Dev2022!"
+        }
+    }
+    maven {
+        url "https://maven.aliyun.com/repository/jcenter"
+    }
+}
+application {
+    mainClassName = 'com.chinatelecom.operations.aqmhserivce.Server'
+    // applicationDefaultJvmArgs = ['--add-opens java.base/java.lang=ALL-UNNAMED']
+    applicationDefaultJvmArgs = ['--add-opens','java.base/java.lang=ALL-UNNAMED']
+}
+
+dependencies {
+
+    implementation(
+            'com.ahchinatelecom.it:auth-library:1.0.2',
+            'com.chinatelecom.udp.core:embed-server:it.1.0.2',
+            'com.chinatelecom.udp.core:websecurity-library:it.1.0.0',
+            'commons-fileupload:commons-fileupload:1.4',
+            'org.apache.tomcat.embed:tomcat-embed-websocket:10.0.11',
+            'org.postgresql:postgresql:42.2.20',
+            'xerces:xercesImpl:2.12.1',
+            'org.apache.logging.log4j:log4j-api:2.17.0',
+            'org.apache.logging.log4j:log4j-core:2.17.0',
+            'org.aspectj:aspectjweaver:1.9.5',
+            'com.baomidou:mybatis-plus:3.3.1',
+            'org.springframework.data:spring-data-redis:2.5.2',
+            'commons-pool:commons-pool:1.5.1'
+    )
+    annotationProcessor  'org.projectlombok:lombok:1.18.20'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    testImplementation 'junit:junit:4.13'
+}
+
+configurations.all {
+    exclude group: 'cglib'
+}
+
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
+processResources {
+    from ('src/main/webapp') {
+        into 'html'
+    }
+}
+
+version='1.0'
