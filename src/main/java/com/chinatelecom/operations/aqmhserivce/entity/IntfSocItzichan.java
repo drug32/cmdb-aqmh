@@ -1,0 +1,70 @@
+package com.chinatelecom.operations.aqmhserivce.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+@Data
+@TableName("intf_soc_itzichan")
+public class IntfSocItzichan {
+    private String assetId;
+    private String assetName;
+    private String areaId;
+    private String orgId;
+    private String deptOrgId;
+    private String specialityId;
+    private String assetGroupId;
+    private String assetGroup;
+    private String assetRole;
+    private String assetDescription;
+    private String respUserName;
+    private String respUseraPhone;
+    private String userbName;
+    private String respUserbName;
+    private String state;
+    private String keyLevel;
+    private String pkeyLevel;
+    private String assetClass;
+    private String mgmtProtocol;
+    private String manuFacturer;
+    private String category;
+    private String modelNumber;
+    private String osType;
+    private String osVersion;
+    private String superAssetId;
+    private String updateTime;
+    private String collway;
+    private String ifScan;
+    private String mgmtIp;
+    private String publicIp;
+    private String dcnIp;
+    private String cn2Ip;
+    private String privateIp;
+    private String floatingIp;
+    private String hostMappingIp;
+    private String dcnManualIp;
+    private String pubManualIp;
+    private String subCategory;
+    private String agentInfo;
+    private String antivirusProperty;
+    private String patchProperty;
+    private String business;
+    private String hostPort;
+    private String processList;
+    private String hostList;
+    private String holesAttribute;
+    private String logProperty;
+    private String accountPasswordPolicy;
+    private String startupConfiguration;
+    private String osConfiguration;
+    private String virtualMachineSystem;
+    private String databaseName;
+    private String databaseVersion;
+    private String databasePort;
+    private String middlewareName;
+    private String middlewareVersion;
+    private String middlewarePort;
+    private String appName;
+    private String appVersion;
+    private String appPort;
+    private String webAccessUrl;
+}

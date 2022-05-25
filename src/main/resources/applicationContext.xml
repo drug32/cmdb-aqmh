@@ -12,7 +12,7 @@
 		<!--<property name="url" value="jdbc:postgresql://134.95.224.203:18922/qysjhzkpiin" />
 		<property name="username"><value>qysjhzkpiin</value></property>
 		<property name="password"><value>Qysjhzkpiin!@#123</value></property>-->
-		<property name="url" value="jdbc:postgresql://134.95.237.173:8001/postgres" />
+		<property name="url" value="jdbc:postgresql://134.95.237.173:8001/irad" />
 		<property name="username"><value>irad</value></property>
 		<property name="password"><value>Irad173%</value></property>
 		<property name="testWhileIdle"><value>true</value></property>
@@ -47,7 +47,7 @@
     <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
     </bean>
 	<context:component-scan
-		base-package="com.chinatelecom.udp com.ahchinatelecom.auth com.chinatelecom.operations.rbacserivce">
+		base-package="com.chinatelecom.udp com.ahchinatelecom.auth com.chinatelecom.operations.aqmhserivce">
 		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.cmclient.entity.CMItem"/>
 		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.userrights.entity.SystemInfo"/>
 		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.userrights.entity.SystemMenuInfo"/>
@@ -68,14 +68,7 @@
 		<!-- 自动扫描Mapping.xml文件 -->
 		<property name="mapperLocations" value="classpath:mapper/*.xml"/>
 		<property name="configLocation" value="classpath:mybatis-config.xml"/>
-		<property name="typeAliasesPackage" value="com.chinatelecom.operations.rbacserivce.entity"></property>
-		<!-- 分页 -->
-		<property name="plugins">
-			<array>
-				<bean class="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor" />
-			</array>
-		</property>
-
+		<property name="typeAliasesPackage" value="com.chinatelecom.operations.aqmhserivce.entity"></property>
 	</bean>
 	<!--配置逻辑删除-->
 	<bean id="dbConfig" class="com.baomidou.mybatisplus.core.config.GlobalConfig.DbConfig">
@@ -91,7 +84,7 @@
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean"></property>
 		<!--要扫描的dao层包-->
 		<property name="basePackage"
-				  value="com.chinatelecom.operations.rbacserivce.mapper"></property>
+				  value="com.chinatelecom.operations.aqmhserivce.mapper"></property>
 	</bean>
 
 

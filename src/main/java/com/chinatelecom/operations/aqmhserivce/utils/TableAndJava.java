@@ -102,7 +102,7 @@ public class TableAndJava {
 
     }
     public static void main(String[] args) {
-        Table2Java("entity","intf_soc_jixian");
+        Table2Java("entity","intf_soc_xitongbaolumian");
     }
 
 }
