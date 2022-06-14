@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chinatelecom.operations.aqmhserivce.mapper.IntfSocIpbaolumianMapper">
+
+
+
+    <select id="getDeptIpBaoLuMian" resultType="java.lang.Integer">
+        select count(*) from intf_soc_ipbaolumian where system_id in(select id from intf_soc_djxt where company_id=#{deptId})
+    </select>
+
+    <select id="getDeptIpBaoLuMianAll" resultType="com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.DeptIpBaoLuMian">
+        select table4.company_id as deptId,table5.dept_name as deptName,total as num from(select company_id,sum(num) as total from (select table1.systemid,table1.num,table2.businessname_level,table2.company_id
+                                                                                                                                    from (select system_id as systemId,count(1) as num from intf_soc_ipbaolumian group by system_id ) as table1  left join intf_soc_djxt table2 on table1.systemId=table2.id
+                                                                                                                                   )as table3 where company_id!='null' group by company_id ) as table4 left join dept_info as table5 on table4.company_id=table5.dept_id order by total desc    </select>
+
+</mapper>

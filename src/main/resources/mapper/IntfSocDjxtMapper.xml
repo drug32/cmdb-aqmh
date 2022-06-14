@@ -20,4 +20,10 @@
         GROUP BY
             work_prop_name
     </select>
+    <select id="getOrgMachineNum"
+            resultType="com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.OrgMachineNum">
+        select dept_name as orgName,orgId, num from (select org_id as orgId ,count(1) as num  from intf_soc_itzichan
+        where org_id!='null' and category like '1%' GROUP BY org_id )
+       as table1 left join dept_info on table1.orgId=dept_info.dept_id  order by num desc
+    </select>
 </mapper>

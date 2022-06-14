@@ -48,7 +48,7 @@ public class MybatisGeneratorConfig {
         // 策略配置
         StrategyConfig.Builder strategyConfigBuilder = new StrategyConfig.Builder();
         // 设置需要映射的表名,字符串数组，可以生成多个表
-        strategyConfigBuilder.addInclude("intf_soc_sifangguanli");
+        strategyConfigBuilder.addInclude("intf_soc_ipbaolumian");
         // 下划线转驼峰
         strategyConfigBuilder.entityBuilder().naming(NamingStrategy.underline_to_camel);
         strategyConfigBuilder.entityBuilder().columnNaming(NamingStrategy.underline_to_camel);
@@ -63,7 +63,6 @@ public class MybatisGeneratorConfig {
         templateConfigBuilder.controller("");
         //控制 不生成 mapperXml，后续根据自己需要创建
         templateConfigBuilder.mapperXml("");
-        templateConfigBuilder.service("%sservice","%sserviceImpl");
 
         // 逻辑删除
        /* strategyConfigBuilder.entityBuilder().logicDeleteColumnName("deleted");
