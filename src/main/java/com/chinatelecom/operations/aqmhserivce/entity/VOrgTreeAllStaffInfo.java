@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("public.v_org_tree_all_staff_info")
+@TableName("aqmh.v_org_tree_all_staff_info")
 public class VOrgTreeAllStaffInfo implements Serializable {
 
 

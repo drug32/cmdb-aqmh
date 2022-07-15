@@ -21,9 +21,8 @@ public class MybatisGeneratorConfig {
         //内部会自行判断数据库类型
         DataSourceConfig.Builder dataSourceConfigBuilder = new DataSourceConfig
                 .Builder(
-                "jdbc:postgresql://134.95.237.173:8001/irad",
-                "irad",
-                "Irad173%");
+                "jdbc:clickhouse://22.0.0.101:18666/aqmh",
+                "default","");
         /**
          * 全局配置
          */
@@ -48,7 +47,7 @@ public class MybatisGeneratorConfig {
         // 策略配置
         StrategyConfig.Builder strategyConfigBuilder = new StrategyConfig.Builder();
         // 设置需要映射的表名,字符串数组，可以生成多个表
-        strategyConfigBuilder.addInclude("intf_soc_ipbaolumian");
+        strategyConfigBuilder.addInclude("intf_tsgz_alarm");
         // 下划线转驼峰
         strategyConfigBuilder.entityBuilder().naming(NamingStrategy.underline_to_camel);
         strategyConfigBuilder.entityBuilder().columnNaming(NamingStrategy.underline_to_camel);

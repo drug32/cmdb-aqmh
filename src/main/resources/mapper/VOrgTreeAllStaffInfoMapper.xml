@@ -11,6 +11,6 @@
         </if>
     </select>
     <select id="getStaffKindAndNum" resultType="java.util.Map">
-        select ygygxz,count(1) from  v_org_tree_all_staff_info group by ygygxz
+        select ygygxz,count(1) as num from  v_org_tree_all_staff_info group by ygygxz
     </select>
 </mapper>

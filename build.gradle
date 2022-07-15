@@ -28,9 +28,9 @@ application {
 dependencies {
 
     implementation(
-            'com.ahchinatelecom.it:auth-library:1.0.2',
-            'com.chinatelecom.udp.core:embed-server:it.1.0.2',
-            'com.chinatelecom.udp.core:websecurity-library:it.1.0.0',
+            'com.ahchinatelecom.it:auth-library:1.1.0',
+            'com.chinatelecom.udp.core:embed-server:it.1.1.0',
+            'com.chinatelecom.udp.core:websecurity-library:it.1.1.0',
             'commons-fileupload:commons-fileupload:1.4',
             'org.apache.tomcat.embed:tomcat-embed-websocket:10.0.11',
             'org.postgresql:postgresql:42.2.20',
@@ -42,8 +42,12 @@ dependencies {
             'org.springframework.data:spring-data-redis:2.5.2',
             'commons-pool:commons-pool:1.5.1',
             'com.baomidou:mybatis-plus-generator:3.5.0',
-            'org.apache.velocity:velocity-engine-core:2.3'
-
+            'org.apache.velocity:velocity-engine-core:2.3',
+            'org.apache.tinkerpop:tinkergraph-gremlin:3.3.3',
+            'org.apache.tinkerpop:gremlin-driver:3.3.3',
+            'org.apache.tinkerpop:gremlin-core:3.3.3',
+            'com.orientechnologies:orientdb-gremlin:3.2.3',
+            'com.clickhouse:clickhouse-jdbc:0.3.2-patch4'
     )
     annotationProcessor  'org.projectlombok:lombok:1.18.20'
     compileOnly 'org.projectlombok:lombok:1.18.20'

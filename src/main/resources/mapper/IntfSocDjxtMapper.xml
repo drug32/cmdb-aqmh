@@ -6,19 +6,19 @@
 
     <select id="getLoginTimes" resultType="com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.GetLoginTimes">
         SELECT
-            work_prop_name AS workPropName,
+            ygygxz AS workPropName,
             SUM (loginTimes) AS total
         FROM
             (
                 SELECT
                     staffAccount,loginTimes,
-                    table2.work_prop_name
+                    table2.ygygxz
                 FROM
-                    ( SELECT staff_account AS staffAccount, COUNT ( 1 ) AS loginTimes FROM tb_itm_tyrz_login_auth_log WHERE target_client_id =#{targetClientId} GROUP BY staff_account ) AS table1
-                        LEFT JOIN empee_acct_info table2 ON table1.staffAccount = table2.staff_account
-            ) AS table3
+                    ( SELECT staff_account AS staffAccount, COUNT ( 1 ) AS loginTimes FROM aqmh.tb_itm_tyrz_login_auth_log WHERE target_client_id =#{targetClientId} GROUP BY staff_account ) AS table1
+                        LEFT JOIN aqmh.v_org_tree_all_staff_info table2 ON table1.staffAccount = table2.staffzh
+            ) AS table3 where ygygxz!=''
         GROUP BY
-            work_prop_name
+            ygygxz
     </select>
     <select id="getOrgMachineNum"
             resultType="com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.OrgMachineNum">

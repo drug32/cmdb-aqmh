@@ -2,7 +2,8 @@
 package com.chinatelecom.operations.aqmhserivce.utils;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.chinatelecom.udp.core.lang.json.JSONObject;
+import com.chinatelecom.udp.core.lang.json.JsonObject;
+import net.minidev.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.List;
@@ -116,8 +117,8 @@ public class PageUtils implements Serializable {
 		return map;
 	}
 
-	public static JSONObject getDataFromPage(PageUtils page) {
-		JSONObject object = new JSONObject();
+	public static JsonObject getDataFromPage(PageUtils page) {
+		JsonObject object = new JsonObject();
 		object.put("currPage", page.getCurrPage());
 		object.put("totalCount", page.getTotalCount());
 		object.put("pageSize", page.getPageSize());

@@ -7,16 +7,18 @@ import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.GetLoginTim
 import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.OrgMachineNum;
 import com.chinatelecom.operations.aqmhserivce.mapper.IntfSocDjxtMapper;
 import com.chinatelecom.operations.aqmhserivce.mapper.IntfSocIpbaolumianMapper;
+import com.chinatelecom.operations.aqmhserivce.mapper.IntfTsgzAlarmMapper;
 import com.chinatelecom.operations.aqmhserivce.mapper.VOrgTreeAllStaffInfoMapper;
 import com.chinatelecom.operations.aqmhserivce.service.*;
 import com.chinatelecom.operations.aqmhserivce.utils.*;
 import com.chinatelecom.udp.core.datarouter.IDataResponse;
 import com.chinatelecom.udp.core.datarouter.IWorkService;
 import com.chinatelecom.udp.core.datarouter.ServiceMethodInfo;
+import com.chinatelecom.udp.core.datarouter.WebContextHolder;
 import com.chinatelecom.udp.core.datarouter.exception.DataException;
-import com.chinatelecom.udp.core.datarouter.response.JSONResponse;
-import com.chinatelecom.udp.core.lang.json.JSONArray;
-import com.chinatelecom.udp.core.lang.json.JSONObject;
+import com.chinatelecom.udp.core.datarouter.response.JsonResponse;
+import com.chinatelecom.udp.core.lang.json.JsonArray;
+import com.chinatelecom.udp.core.lang.json.JsonObject;
 import org.apache.bcel.generic.NEW;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -26,9 +28,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -58,7 +58,10 @@ public class IntfSocService implements IWorkService {
     private IIntfSocIpbaolumianService intfSocIpbaolumianService;
     @Autowired
     private VOrgTreeAllStaffInfoMapper vOrgTreeAllStaffInfoMapper;
-
+    @Autowired
+    private IIntfTsgzAlarmService intfTsgzAlarmService;
+    @Autowired
+    private IntfTsgzAlarmMapper  intfTsgzAlarmMapper;
     /** @Author 孙虎
      * @Description //获取某个系统的相关信息
      * @date 9:45 2022/5/31
@@ -68,41 +71,47 @@ public class IntfSocService implements IWorkService {
     @ServiceMethodInfo(authentincation = false)
     public IDataResponse getSystemInfo(String sysId) throws DataException, IOException, SQLException {
         logger.info("=================>获取系统的相关信息,getSystemInfo方法入参sysId为：" +sysId);
-        if(StringUtils.isEmpty(sysId)){
-            return new JSONResponse(new JsonResult("系统ID不能为空",false));
-        }
-        JSONObject object = new JSONObject();
         List<IntfSocDjxt> intfSocDjxtList = intfSocDjxtService.list(new QueryWrapper<IntfSocDjxt>().eq("id", sysId));
+        if(StringUtils.isEmpty(sysId)||intfSocDjxtList==null||intfSocDjxtList.size()==0){
+            return new JsonResponse(new JsonResult("系统ID不存在，请核实入参",false));
+        }
         IntfSocDjxt intfSocDjxt = intfSocDjxtList.get(0);
+        JsonObject object = new JsonObject();
         //查询出指定业务系统的应用程序资产
         long countForApp = intfSocItZichanService.count(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId).likeRight("category", "4"));
         //查询出指定业务系统的数据库资产
-        long countForDB = intfSocItZichanService.count(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId).likeRight("category", "403"));
+        long countForDb = intfSocItZichanService.count(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId).likeRight("category", "403"));
         //查询出指定业务系统的主机资产
         long countForMachine = intfSocItZichanService.count(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId).likeRight("category", "1"));
-        List<IntfSocItzichan> itZiChanList = intfSocItZichanService.list(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId));
-        List<String> assetIdList = itZiChanList.stream().map(IntfSocItzichan::getAssetId).collect(Collectors.toList());
+        /*List<IntfSocItzichan> itZiChanList = intfSocItZichanService.list(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId));
+        List<String> assetIdList = itZiChanList.stream().map(IntfSocItzichan::getAssetId).collect(Collectors.toList());*/
         //获取该系统的登录次数以及各种类型的员工的登录次数
-        List<GetLoginTimes> LoginTimesList = intfSocDjxtMapper.getLoginTimes("CTAHMSSOA20130002");
+        List<GetLoginTimes> loginTimesList = intfSocDjxtMapper.getLoginTimes("CTAHMSSOA20130002");
         //查询出指定业务系统的系统暴露面
         long countForXitongbaolumian = intfSocXitongbaolumianService.count(new QueryWrapper<IntfSocXitongbaolumian>().eq("system_id", sysId));
         if(countForXitongbaolumian>0){
             object.put("xitongbaolumian",countForXitongbaolumian);
         }
+        //获取该系统的态势警告信息的攻击次数
+        List<IntfSocItzichan> machineList = intfSocItZichanService.list(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId).likeRight("category", "1"));
+        Set<String> ipSet = getSystemAllMachineIp(machineList);
+        int tsCount = intfTsgzAlarmMapper.getTsCount(ipSet);
         object.put("name", intfSocDjxt.getName());
         object.put("baName", intfSocDjxt.getBusinessnameLevel());
         object.put("chengXu", countForApp);
-        object.put("shuJuKu", countForDB);
+        object.put("shuJuKu", countForDb);
         object.put("zhuJi", countForMachine);
-        object.put("loginTimes", LoginTimesList);
-        return new JSONResponse(new JsonResult(object));
+        object.put("loginTimes", loginTimesList);
+        object.put("tsCount", tsCount);
+        return new JsonResponse(new JsonResult(object));
     }
 
 
     @ServiceMethodInfo(authentincation = false)
     public IDataResponse getSystemInfoList(String orgId) throws DataException, IOException, SQLException {
+        logger.info("111111111111111111111");
         List<IntfSocDjxt> list = intfSocDjxtService.list(new QueryWrapper<IntfSocDjxt>().eq("company_id",orgId));
-        return new JSONResponse(new JsonResult(list));
+        return new JsonResponse(new JsonResult(list));
     }
 
 
@@ -130,13 +139,13 @@ public class IntfSocService implements IWorkService {
         numberFormat.setMaximumFractionDigits(2);
         String result = numberFormat.format((float) jiXianSuccess / (float) jiXianAll * 100).concat("%");
         List<Map<String, String>> staffKindAndNumMap = vOrgTreeAllStaffInfoMapper.getStaffKindAndNum();
-        JSONObject object = new JSONObject();
+        JsonObject object = new JsonObject();
         object.put("deptList", list);
         object.put("staffCount",staffCount);
         object.put("orgMachineNumList",orgMachineNumList);
         object.put("jiXianSucuessRate", result);
         object.put("staffInfo", staffKindAndNumMap);
-        return new JSONResponse(new JsonResult(object));
+        return new JsonResponse(new JsonResult(object));
     }
 
 
@@ -149,7 +158,7 @@ public class IntfSocService implements IWorkService {
     @ServiceMethodInfo(authentincation = false)
     public IDataResponse getOrgData(String orgId,String orgName) throws DataException, IOException, SQLException {
         logger.info("开始获取单位数据=======================>");
-        JSONObject object = new JSONObject();
+        JsonObject object = new JsonObject();
         //该单位拥有的系统个数
         List<IntfSocDjxt> systemList = intfSocDjxtService.list(new QueryWrapper<IntfSocDjxt>().eq("company_id", orgId));
         //该单位拥有的工号数量(根据单位名称匹配的，有的对应不上，比如省IT中心==省企业信息化部）
@@ -165,35 +174,37 @@ public class IntfSocService implements IWorkService {
         object.put("orgMachine",orgMachineCount);
         object.put("systemList", systemList);
         object.put("staffCount",staffCount);
-        return new JSONResponse(new JsonResult(object));
+        return new JsonResponse(new JsonResult(object));
     }
 
     @ServiceMethodInfo(authentincation = false)
-    public IDataResponse getItZichanList(JSONObject object) throws Exception {
+    public IDataResponse getItZichanList(JsonObject object) throws Exception {
         //入参校验
         Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
         if (!map.containsKey(Constant.SYS_ID)) {
-            return new JSONResponse(new JsonResult("系统ID为空，请检查", false));
+            return new JsonResponse(new JsonResult("系统ID为空，请检查", false));
         }
         //分页查询
         IPage<IntfSocItzichan> page = intfSocItZichanService.page(new Query<IntfSocItzichan>().getPage(map),
                 new QueryWrapper<IntfSocItzichan>()
                         .eq(map.get(Constant.SYS_ID) != null, "asset_group_id", map.get(Constant.SYS_ID))
                         .like(StringUtils.isNotBlank((String) map.get("kind")), "category", map.get("kind")));
-        JSONObject dataFromPage = PageUtils.getDataFromPage(new PageUtils(page));
-        JSONArray array =(JSONArray)dataFromPage.get("list");
+        JsonObject dataFromPage = PageUtils.getDataFromPage(new PageUtils(page));
+        JsonArray array =(JsonArray)dataFromPage.get("list");
         List<IntfSocItzichan> intfSocItzichanList =new ArrayList<>();
-        ArrayList<JSONObject> itZiChanList = array.toList(JSONObject.class);
-        for (JSONObject jsonObject : itZiChanList) {
-            IntfSocItzichan itZichanEntity = jsonObject.toBean(IntfSocItzichan.class);
+        ArrayList<JsonObject> itZiChanList = array.toList(JsonObject.class);
+        for (JsonObject JsonObject : itZiChanList) {
+            IntfSocItzichan itZichanEntity = JsonObject.toBean(IntfSocItzichan.class);
+            intfSocItzichanList.add(itZichanEntity);
         }
-        return new JSONResponse(new JsonResult(dataFromPage));
+        dataFromPage.put("list",itZiChanList);
+        return new JsonResponse(new JsonResult(dataFromPage));
     }
 
 
     @ServiceMethodInfo(authentincation = false)
     public IDataResponse getIpBaoLuMian() throws Exception {
-        JSONObject object = new JSONObject();
+        JsonObject object = new JsonObject();
         long count = intfSocIpbaolumianService.count();
     /*    //查询出所有部门
         List<DeptInfo> deptInfoList = deptInfoService.list(new QueryWrapper<DeptInfo>().eq("parent_id","0"));
@@ -214,9 +225,47 @@ public class IntfSocService implements IWorkService {
         List<DeptIpBaoLuMian> deptIpBaoLuMianList = intfSocIpbaolumianMapper.getDeptIpBaoLuMianAll();
         object.put("ipbaolumian",count);
         object.put("deptIpBaoLuMianList",deptIpBaoLuMianList);
-        return new JSONResponse(new JsonResult(object));
+        return new JsonResponse(new JsonResult(object));
     }
 
+    private Set<String> getSystemAllMachineIp(List<IntfSocItzichan> machineList) {
+        Set<String> returnSet = new HashSet<>();
+        for (IntfSocItzichan itzichan : machineList) {
+            if (!itzichan.getMgmtIp().equals("null")) {
+                returnSet.add(itzichan.getMgmtIp());
+            }
+            if (!itzichan.getPublicIp().equals("null")) {
+                returnSet.addAll(Arrays.asList(getIpSplit(itzichan.getPublicIp())));
+            }
+            if (!itzichan.getDcnIp().equals("null")) {
+                returnSet.addAll(Arrays.asList(getIpSplit(itzichan.getDcnIp())));
+            }
+            if (!itzichan.getCn2Ip().equals("null")) {
+                returnSet.addAll(Arrays.asList(getIpSplit(itzichan.getCn2Ip())));
+            }
+            if (!itzichan.getPrivateIp().equals("null")) {
+                returnSet.addAll(Arrays.asList(getIpSplit(itzichan.getPrivateIp())));
+            }
+            if (!itzichan.getPubManualIp().equals("null")) {
+                returnSet.addAll(Arrays.asList(getIpSplit(itzichan.getPubManualIp())));
+            }
+            if (!itzichan.getFloatingIp().equals("null")) {
+                returnSet.addAll(Arrays.asList(getIpSplit(itzichan.getFloatingIp())));
+            }
+            if (!itzichan.getHostMappingIp().equals("null")) {
+                returnSet.addAll(Arrays.asList(getIpSplit(itzichan.getHostMappingIp())));
+            }
+            if (!itzichan.getDcnManualIp().equals("null")) {
+                returnSet.addAll(Arrays.asList(getIpSplit(itzichan.getDcnManualIp())));
+            }
+        }
+        return returnSet;
+    }
+
+    private String[] getIpSplit(String ip){
+        WebContextHolder.getLoginUserInfo();
+      return  ip.split(",");
+    }
     @Override
     public String getCode() {
         return "intfSocService";

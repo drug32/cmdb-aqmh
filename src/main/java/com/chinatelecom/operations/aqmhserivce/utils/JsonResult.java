@@ -1,14 +1,13 @@
 package com.chinatelecom.operations.aqmhserivce.utils;
 
-import com.chinatelecom.udp.core.lang.json.JSONObject;
-
+import com.chinatelecom.udp.core.lang.json.JsonObject;
 import java.io.Serializable;
 
 /**
  * @author 孙虎
  * @Description 返回结果封装
  */
-public class JsonResult extends JSONObject implements Serializable {
+public class JsonResult extends JsonObject implements Serializable {
 
 
     private static final long serialVersionUID = -4800793124936904868L;

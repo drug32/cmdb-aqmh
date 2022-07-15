@@ -8,13 +8,13 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
 	<aop:aspectj-autoproxy expose-proxy="true"/>	
     <bean name="dataSource_platform" class="org.apache.tomcat.jdbc.pool.DataSource">
-		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="driverClassName" value="ru.yandex.clickhouse.ClickHouseDriver" />
 		<!--<property name="url" value="jdbc:postgresql://134.95.224.203:18922/qysjhzkpiin" />
 		<property name="username"><value>qysjhzkpiin</value></property>
 		<property name="password"><value>Qysjhzkpiin!@#123</value></property>-->
-		<property name="url" value="jdbc:postgresql://134.95.237.173:8001/irad" />
-		<property name="username"><value>irad</value></property>
-		<property name="password"><value>Irad173%</value></property>
+		<property name="url" value="jdbc:clickhouse://22.0.0.101:18666/aqmh" />
+		<property name="username"><value>default</value></property>
+		<property name="password"><value></value></property>
 		<property name="testWhileIdle"><value>true</value></property>
 		  <property name="validationInterval"><value>60000</value></property>
 		  <property name="validationQuery"><value>select 1</value></property>
@@ -40,10 +40,10 @@
        </property> 
    </bean>
 	<!-- 配置事务管理器 -->
-	 <bean id="transactionManagerDB" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+<!--	 <bean id="transactionManagerDB" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource_platform" />
 	</bean>
-	<tx:annotation-driven transaction-manager="transactionManagerDB"/>
+	<tx:annotation-driven transaction-manager="transactionManagerDB"/>-->
     <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
     </bean>
 	<context:component-scan
