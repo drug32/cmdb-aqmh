@@ -25,11 +25,11 @@
                             table2.businessname_level,
                             table2.company_id
                         FROM
-                            ( SELECT system_id AS systemId, COUNT ( 1 ) AS num FROM aqmh.intf_soc_ipbaolumian GROUP BY system_id ) AS table1
-                                LEFT JOIN aqmh.intf_soc_djxt table2 ON table1.systemId = table2.id ) AS table3
+                            ( SELECT system_id AS systemId, COUNT ( 1 ) AS num FROM intf_soc_ipbaolumian GROUP BY system_id ) AS table1
+                                LEFT JOIN intf_soc_djxt table2 ON table1.systemId = table2.id ) AS table3
                 WHERE
                     company_id != 'null' 	GROUP BY	company_id  ) AS table4
-                LEFT JOIN aqmh.dept_info AS table5 ON table4.company_id = table5.dept_id
+                LEFT JOIN dept_info AS table5 ON table4.company_id = table5.dept_id
         ORDER BY
             total DESC
       </select>

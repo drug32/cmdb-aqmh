@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("aqmh.intf_soc_ipbaolumian")
+@TableName("intf_soc_ipbaolumian")
 public class IntfSocIpbaolumian implements Serializable {
 
 

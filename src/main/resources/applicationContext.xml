@@ -12,9 +12,9 @@
 		<!--<property name="url" value="jdbc:postgresql://134.95.224.203:18922/qysjhzkpiin" />
 		<property name="username"><value>qysjhzkpiin</value></property>
 		<property name="password"><value>Qysjhzkpiin!@#123</value></property>-->
-		<property name="url" value="jdbc:clickhouse://22.0.0.101:18666/aqmh" />
+		<property name="url" value="jdbc:clickhouse://134.95.237.10:8123/default" />
 		<property name="username"><value>default</value></property>
-		<property name="password"><value></value></property>
+		<property name="password"><value>Irad173%</value></property>
 		<property name="testWhileIdle"><value>true</value></property>
 		  <property name="validationInterval"><value>60000</value></property>
 		  <property name="validationQuery"><value>select 1</value></property>

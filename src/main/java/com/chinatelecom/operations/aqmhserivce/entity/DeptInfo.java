@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("aqmh.dept_info")
+@TableName("dept_info")
 public class DeptInfo implements Serializable {
 
 

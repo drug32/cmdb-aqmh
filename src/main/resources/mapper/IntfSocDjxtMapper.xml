@@ -14,8 +14,8 @@
                     staffAccount,loginTimes,
                     table2.ygygxz
                 FROM
-                    ( SELECT staff_account AS staffAccount, COUNT ( 1 ) AS loginTimes FROM aqmh.tb_itm_tyrz_login_auth_log WHERE target_client_id =#{targetClientId} GROUP BY staff_account ) AS table1
-                        LEFT JOIN aqmh.v_org_tree_all_staff_info table2 ON table1.staffAccount = table2.staffzh
+                    ( SELECT staff_account AS staffAccount, COUNT ( 1 ) AS loginTimes FROM tb_itm_tyrz_login_auth_log WHERE target_client_id =#{targetClientId} GROUP BY staff_account ) AS table1
+                        LEFT JOIN v_org_tree_all_staff_info table2 ON table1.staffAccount = table2.staffzh
             ) AS table3 where ygygxz!=''
         GROUP BY
             ygygxz
