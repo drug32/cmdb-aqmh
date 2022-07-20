@@ -48,7 +48,7 @@
     </bean>
 	<context:component-scan
 		base-package="com.chinatelecom.udp com.ahchinatelecom.auth com.chinatelecom.operations.aqmhserivce">
-		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.cmclient.entity.CMItem"/>
+		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.cmclient.entity.CmItem"/>
 		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.userrights.entity.SystemInfo"/>
 		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.userrights.entity.SystemMenuInfo"/>
 		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.userrights.entity.SystemPageInfo"/>

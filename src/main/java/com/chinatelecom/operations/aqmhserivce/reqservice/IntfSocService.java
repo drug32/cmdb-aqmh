@@ -4,11 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.chinatelecom.operations.aqmhserivce.entity.*;
 import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.DeptIpBaoLuMian;
 import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.GetLoginTimes;
+import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.GroupByCityCodeCount;
 import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.OrgMachineNum;
-import com.chinatelecom.operations.aqmhserivce.mapper.IntfSocDjxtMapper;
-import com.chinatelecom.operations.aqmhserivce.mapper.IntfSocIpbaolumianMapper;
-import com.chinatelecom.operations.aqmhserivce.mapper.IntfTsgzAlarmMapper;
-import com.chinatelecom.operations.aqmhserivce.mapper.VOrgTreeAllStaffInfoMapper;
+import com.chinatelecom.operations.aqmhserivce.mapper.*;
 import com.chinatelecom.operations.aqmhserivce.service.*;
 import com.chinatelecom.operations.aqmhserivce.utils.*;
 import com.chinatelecom.udp.core.datarouter.IDataResponse;
@@ -19,17 +17,17 @@ import com.chinatelecom.udp.core.datarouter.exception.DataException;
 import com.chinatelecom.udp.core.datarouter.response.JsonResponse;
 import com.chinatelecom.udp.core.lang.json.JsonArray;
 import com.chinatelecom.udp.core.lang.json.JsonObject;
-import org.apache.bcel.generic.NEW;
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component; 
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 
@@ -62,6 +60,10 @@ public class IntfSocService implements IWorkService {
     private IIntfTsgzAlarmService intfTsgzAlarmService;
     @Autowired
     private IntfTsgzAlarmMapper  intfTsgzAlarmMapper;
+
+    @Resource
+    private IntfIdcPortBlackListService intfIdcPortBlackListService;
+    @Resource IntfIdcPortBlackListMapper intfIdcPortBlackListMapper;
     /** @Author 孙虎
      * @Description //获取某个系统的相关信息
      * @date 9:45 2022/5/31
@@ -261,6 +263,25 @@ public class IntfSocService implements IWorkService {
         }
         return returnSet;
     }
+
+    /**
+     * 查询intfIdcPortBlackList所有记录数以及citycode分组记录数
+     * @return List
+     */
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getIdcPortBlackList() {
+        JsonObject object = new JsonObject();
+        //查询所有记录数
+        long count = intfIdcPortBlackListService.count();
+
+        //根据citycode分组展示总数，并增排序
+        List<GroupByCityCodeCount> groupByCityCodeList = intfIdcPortBlackListMapper.getCountByCityCode();
+        object.put("allCount",count);
+        object.put("groupByCityCodeList",groupByCityCodeList);
+        return new JsonResponse(new JsonResult(object));
+    }
+
+
 
     private String[] getIpSplit(String ip){
         WebContextHolder.getLoginUserInfo();
