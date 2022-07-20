@@ -115,7 +115,7 @@
 		<property name="blockWhenExhausted" value="false" />
 	</bean>
 	<!-- 配置jedis连接工厂 -->
-	<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+	<!--<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
 		<property name="hostName" value="${spring.redis.host}"/>
 		<property name="port" value="${spring.redis.port}"/>
 		<property name="password" value="${spring.redis.password}" />
@@ -123,7 +123,7 @@
 		<property name="usePool" value="true"/>
 		<constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
 	</bean>
-	<!-- 配置RedisTemplate -->
+	&lt;!&ndash; 配置RedisTemplate &ndash;&gt;
 	<bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer" />
 	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" >
 		<property name="connectionFactory" ref="jedisConnectionFactory" />
@@ -131,7 +131,7 @@
 		<property name="hashKeySerializer" ref="stringRedisSerializer" />
 		<property name="valueSerializer" ref="stringRedisSerializer" />
 		<property name="hashValueSerializer" ref="stringRedisSerializer" />
-	</bean>
+	</bean>-->
 <aop:aspectj-autoproxy/>
 </beans>
 
