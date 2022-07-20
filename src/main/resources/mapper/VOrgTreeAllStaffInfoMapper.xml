@@ -7,7 +7,7 @@
     <select id="getStaffCount" resultType="java.lang.Integer">
         select count(DISTINCT staffzh) from v_org_tree_all_staff_info
         <if test="orgName!=null">
-            where szsjglzzs like concat(concat('%',#{orgName},'%'))
+            where szsjglzzs like concat('%',#{orgName},'%')
         </if>
     </select>
     <select id="getStaffKindAndNum" resultType="java.util.Map">
