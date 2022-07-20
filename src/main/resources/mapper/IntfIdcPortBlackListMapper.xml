@@ -6,10 +6,11 @@
 
     <select id="getCountByCityCode" resultType="com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.GroupByCityCodeCount">
         select
-            city_code,
+            c.code_name,
             count(1) as count_num
-        from intf_idc_port_black_list
-        group by city_code
+        from intf_idc_port_black_list i
+        join city_name c on i.city_code = c.city_code
+        group by c.code_name
         order by count_num
     </select>
 

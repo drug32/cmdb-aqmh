@@ -9,6 +9,6 @@ import lombok.Data;
  */
 @Data
 public class GroupByCityCodeCount {
-    private String cityCode;
+    private String codeName;
     private Long countNum;
 }
