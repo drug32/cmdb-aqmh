@@ -62,8 +62,14 @@ public class IntfSocService implements IWorkService {
     private IntfTsgzAlarmMapper  intfTsgzAlarmMapper;
 
     @Resource
+    private IntfIdcPortBlackListMapper intfIdcPortBlackListMapper;
+    @Resource
     private IntfIdcPortBlackListService intfIdcPortBlackListService;
-    @Resource IntfIdcPortBlackListMapper intfIdcPortBlackListMapper;
+    @Resource
+    private HoneypotLogService honeypotLogService;
+    @Resource
+    private RegistrationRecordService registrationRecordService;
+
     /** @Author 孙虎
      * @Description //获取某个系统的相关信息
      * @date 9:45 2022/5/31
@@ -266,7 +272,7 @@ public class IntfSocService implements IWorkService {
 
     /**
      * 查询intfIdcPortBlackList所有记录数以及citycode分组记录数
-     * @return List
+     * @return IDataResponse
      */
     @ServiceMethodInfo(authentincation = false)
     public IDataResponse getIdcPortBlackList() {
@@ -274,10 +280,39 @@ public class IntfSocService implements IWorkService {
         //查询所有记录数
         long count = intfIdcPortBlackListService.count();
 
-        //根据citycode分组展示总数，并增排序
+        //根据cityCode分组展示总数，并增排序
         List<GroupByCityCodeCount> groupByCityCodeList = intfIdcPortBlackListMapper.getCountByCityCode();
         object.put("allCount",count);
         object.put("groupByCityCodeList",groupByCityCodeList);
+        return new JsonResponse(new JsonResult(object));
+    }
+
+    /**
+     * 查询honeypotLog所有记录数
+     * @return IDataResponse
+     */
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getHoneyPotInfo() {
+        JsonObject object = new JsonObject();
+        //查询所有记录数
+        long count = honeypotLogService.count();
+        object.put("allCount",count);
+        return new JsonResponse(new JsonResult(object));
+    }
+
+    /**
+     * 查询registrationRecord所有记录数
+     * @return IDataResponse
+     */
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getRegistrationRecordList() {
+        JsonObject object = new JsonObject();
+        //查询所有记录数
+        long count = registrationRecordService.count();
+        //根据citycode分组展示总数，并增排序
+        List<RegistrationRecord> registrationRecordList = registrationRecordService.list();
+        object.put("allCount",count);
+        object.put("registrationRecordList",registrationRecordList);
         return new JsonResponse(new JsonResult(object));
     }
 
