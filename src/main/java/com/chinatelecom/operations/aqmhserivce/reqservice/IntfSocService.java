@@ -61,13 +61,13 @@ public class IntfSocService implements IWorkService {
     @Autowired
     private IntfTsgzAlarmMapper  intfTsgzAlarmMapper;
 
-    @Resource
+    @Autowired
     private IntfIdcPortBlackListMapper intfIdcPortBlackListMapper;
-    @Resource
+    @Autowired
     private IntfIdcPortBlackListService intfIdcPortBlackListService;
-    @Resource
+    @Autowired
     private HoneypotLogService honeypotLogService;
-    @Resource
+    @Autowired
     private RegistrationRecordService registrationRecordService;
 
     /** @Author 孙虎
