@@ -17,7 +17,6 @@ import com.chinatelecom.udp.core.datarouter.exception.DataException;
 import com.chinatelecom.udp.core.datarouter.response.JsonResponse;
 import com.chinatelecom.udp.core.lang.json.JsonArray;
 import com.chinatelecom.udp.core.lang.json.JsonObject;
-import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -140,6 +139,8 @@ public class IntfSocService implements IWorkService {
         List<OrgMachineNum> orgMachineNumList = intfSocDjxtMapper.getOrgMachineNum();
         //
         long jiXianAll = intfSocJixianService.count();
+        //系统总数
+        long systemCount = intfSocDjxtService.count();
         long jiXianSuccess = intfSocJixianService.count(new QueryWrapper<IntfSocJixian>().eq("item_result", "1"));
         // 创建一个数值格式化对象
         NumberFormat numberFormat = NumberFormat.getInstance();
@@ -153,6 +154,7 @@ public class IntfSocService implements IWorkService {
         object.put("orgMachineNumList",orgMachineNumList);
         object.put("jiXianSucuessRate", result);
         object.put("staffInfo", staffKindAndNumMap);
+        object.put("systemCount", systemCount);
         return new JsonResponse(new JsonResult(object));
     }
 
