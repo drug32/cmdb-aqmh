@@ -3,5 +3,26 @@
 
 <mapper namespace="com.chinatelecom.operations.aqmhserivce.mapper.IntfSocJixianMapper">
 
+    <select id="getAllAssetCount" resultType="java.lang.Long">
+        select count(1)
+        from intf_soc_jixian jixian
+                 join intf_soc_itzichan it on jixian.asset_id = it.asset_id
+        where it.dcn_ip = #{}
+    </select>
 
+    <select id="getCount" resultType="java.lang.Long">
+        select count(1)
+        from intf_soc_jixian jixian
+        join intf_soc_itzichan it on jixian.asset_id = it.asset_id
+        where it.dcn_ip = #{}
+        and jixian.item_result = #{}
+    </select>
+
+    <select id="noPassList" resultType="com.chinatelecom.operations.aqmhserivce.entity.IntfSocJixian">
+        select jixian.item_name,jixian.item_result,jixian.point_name,jixian.point_result,jixian.check_time
+        from intf_soc_jixian jixian
+        join intf_soc_itzichan it on jixian.asset_id = it.asset_id
+        where it.dcn_ip = #{}
+        and jixian.point_result = '2'
+    </select>
 </mapper>

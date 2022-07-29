@@ -8,6 +8,7 @@ import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.GroupByCity
 import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.OrgMachineNum;
 import com.chinatelecom.operations.aqmhserivce.mapper.*;
 import com.chinatelecom.operations.aqmhserivce.service.*;
+import com.chinatelecom.operations.aqmhserivce.service.impl.IntfSocJixianServiceImpl;
 import com.chinatelecom.operations.aqmhserivce.utils.*;
 import com.chinatelecom.udp.core.datarouter.IDataResponse;
 import com.chinatelecom.udp.core.datarouter.IWorkService;
@@ -18,6 +19,7 @@ import com.chinatelecom.udp.core.datarouter.response.JsonResponse;
 import com.chinatelecom.udp.core.lang.json.JsonArray;
 import com.chinatelecom.udp.core.lang.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +70,8 @@ public class IntfSocService implements IWorkService {
     private HoneypotLogService honeypotLogService;
     @Autowired
     private RegistrationRecordService registrationRecordService;
+    @Autowired
+    private IntfSocJixianMapper intfSocJixianMapper;
 
     /** @Author 孙虎
      * @Description //获取某个系统的相关信息
@@ -318,6 +322,67 @@ public class IntfSocService implements IWorkService {
         return new JsonResponse(new JsonResult(object));
     }
 
+    /**
+     * 根据ip查询intfSocJixian基线相关信息，检查总量，检查项合格量不合格量以及合格率
+     * @param object
+     * @return
+     * @throws Exception
+     */
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getJixianInfo(JsonObject object) throws Exception {
+        JsonObject jsonObject = new JsonObject();
+        //入参校验
+        Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
+        //查询检查点不通过的项数
+        List<IntfSocJixian> noPassList = intfSocJixianMapper.noPassList(map.get("ip").toString());
+        jsonObject.put("data",noPassList);
+        //查询检查总量
+        Long totalCount = intfSocJixianMapper.getAllAssetCount(map.get("ip").toString());
+        jsonObject.put("totalCount",totalCount);
+        //查询检查项不通过的数量
+        Long typeFailedCount = intfSocJixianMapper.getCount(map.get("ip").toString(),"2");
+        //查询检查项通过的数量
+        Long typePassCount = intfSocJixianMapper.getCount(map.get("ip").toString(),"1");
+        jsonObject.put("failedCount",typeFailedCount);
+        // 创建一个数值格式化对象
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        // 设置精确到小数点后2位
+        numberFormat.setMaximumFractionDigits(2);
+        String passRate = numberFormat.format((float) typePassCount / (float) (typePassCount + typeFailedCount) * 100).concat("%");
+        jsonObject.put("passRate",passRate);
+        return new JsonResponse(new JsonResult(jsonObject));
+    }
+
+    /**
+     * 根据ip查询青藤云用户相关信息
+     * @param object
+     * @return
+     * @throws Exception
+     */
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getUserInfo(JsonObject object) throws Exception {
+        JsonObject jsonObject = new JsonObject();
+        //入参校验
+        Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
+        //查询检查点不通过的项数
+        List<IntfSocJixian> noPassList = intfSocJixianMapper.noPassList(map.get("ip").toString());
+        jsonObject.put("data",noPassList);
+        //查询检查总量
+        Long totalCount = intfSocJixianMapper.getAllAssetCount(map.get("ip").toString());
+        jsonObject.put("totalCount",totalCount);
+        //查询检查项不通过的数量
+        Long typeFailedCount = intfSocJixianMapper.getCount(map.get("ip").toString(),"2");
+        //查询检查项通过的数量
+        Long typePassCount = intfSocJixianMapper.getCount(map.get("ip").toString(),"1");
+        jsonObject.put("failedCount",typeFailedCount);
+        // 创建一个数值格式化对象
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        // 设置精确到小数点后2位
+        numberFormat.setMaximumFractionDigits(2);
+        String passRate = numberFormat.format((float) typePassCount / (float) (typePassCount + typeFailedCount) * 100).concat("%");
+        jsonObject.put("passRate",passRate);
+        return new JsonResponse(new JsonResult(jsonObject));
+    }
 
 
     private String[] getIpSplit(String ip){
