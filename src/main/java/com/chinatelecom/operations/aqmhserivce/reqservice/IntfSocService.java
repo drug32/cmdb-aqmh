@@ -2,10 +2,7 @@ package com.chinatelecom.operations.aqmhserivce.reqservice;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.chinatelecom.operations.aqmhserivce.entity.*;
-import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.DeptIpBaoLuMian;
-import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.GetLoginTimes;
-import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.GroupByCityCodeCount;
-import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.OrgMachineNum;
+import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.*;
 import com.chinatelecom.operations.aqmhserivce.mapper.*;
 import com.chinatelecom.operations.aqmhserivce.service.*;
 import com.chinatelecom.operations.aqmhserivce.service.impl.IntfSocJixianServiceImpl;
@@ -18,6 +15,8 @@ import com.chinatelecom.udp.core.datarouter.exception.DataException;
 import com.chinatelecom.udp.core.datarouter.response.JsonResponse;
 import com.chinatelecom.udp.core.lang.json.JsonArray;
 import com.chinatelecom.udp.core.lang.json.JsonObject;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.logging.log4j.LogManager;
@@ -354,33 +353,72 @@ public class IntfSocService implements IWorkService {
     }
 
     /**
-     * 根据ip查询青藤云用户相关信息
+     * 根据ip查询青藤云用户账号相关信息
      * @param object
      * @return
      * @throws Exception
      */
     @ServiceMethodInfo(authentincation = false)
-    public IDataResponse getUserInfo(JsonObject object) throws Exception {
+    public IDataResponse getUserAccountInfo(JsonObject object) throws Exception {
         JsonObject jsonObject = new JsonObject();
         //入参校验
         Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
-        //查询检查点不通过的项数
-        List<IntfSocJixian> noPassList = intfSocJixianMapper.noPassList(map.get("ip").toString());
-        jsonObject.put("data",noPassList);
-        //查询检查总量
-        Long totalCount = intfSocJixianMapper.getAllAssetCount(map.get("ip").toString());
-        jsonObject.put("totalCount",totalCount);
-        //查询检查项不通过的数量
-        Long typeFailedCount = intfSocJixianMapper.getCount(map.get("ip").toString(),"2");
-        //查询检查项通过的数量
-        Long typePassCount = intfSocJixianMapper.getCount(map.get("ip").toString(),"1");
-        jsonObject.put("failedCount",typeFailedCount);
-        // 创建一个数值格式化对象
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        // 设置精确到小数点后2位
-        numberFormat.setMaximumFractionDigits(2);
-        String passRate = numberFormat.format((float) typePassCount / (float) (typePassCount + typeFailedCount) * 100).concat("%");
-        jsonObject.put("passRate",passRate);
+        //调用青藤云接口
+        JsonObject qty = new JsonObject();
+        JSONArray rows = (JSONArray) qty.get("rows");
+
+        List<UserAccountInfo> userList = new ArrayList<>();
+        for (int i = 0; i < rows.size(); i++) {
+            JSONObject row = (JSONObject)rows.get(i);
+
+            UserAccountInfo user = new UserAccountInfo();
+            user.setGroups(row.getAsString("groups"));
+            user.setName(row.getAsString("name"));
+            user.setStatus((Integer) row.get("status"));
+            user.setHome(row.getAsString("home"));
+            user.setLastLoginTime(row.getAsString("lastLoginTime"));
+            user.setLastLoginIp(row.getAsString("lastLoginTime"));
+            userList.add(user);
+        }
+
+        jsonObject.put("total",userList.size());
+        jsonObject.put("data",userList);
+        return new JsonResponse(new JsonResult(jsonObject));
+    }
+
+    /**
+     * 根据ip查询青藤云进程相关信息
+     * @param object
+     * @return
+     * @throws Exception
+     */
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getProcessInfo(JsonObject object) throws Exception {
+        JsonObject jsonObject = new JsonObject();
+        //入参校验
+        Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
+        //调用青藤云接口
+        JsonObject qty = new JsonObject();
+        JSONArray rows = (JSONArray) qty.get("rows");
+
+        List<ProcessInfo> processInfoList = new ArrayList<>();
+        for (int i = 0; i < rows.size(); i++) {
+            ProcessInfo processInfo = new ProcessInfo();
+            JSONObject row = (JSONObject) rows.get(i);
+            processInfo.setState(row.getAsString("state"));
+            processInfo.setGname(row.getAsString("gname"));
+            processInfo.setUname(row.getAsString("uname"));
+            processInfo.setPid((Integer) row.get("pid"));
+            processInfo.setPpid((Integer) row.get("ppid"));
+            processInfo.setPath(row.getAsString("path"));
+            processInfo.setStartArgs(row.getAsString("startArgs"));
+            processInfo.setStartTime(row.getAsString("startTime"));
+            processInfo.setRoot((Boolean) row.get("root") ?1:0);
+            processInfoList.add(processInfo);
+        }
+
+        jsonObject.put("total",processInfoList.size());
+        jsonObject.put("data",processInfoList);
         return new JsonResponse(new JsonResult(jsonObject));
     }
 
