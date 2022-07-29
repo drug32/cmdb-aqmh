@@ -15,9 +15,18 @@ import com.chinatelecom.udp.core.datarouter.exception.DataException;
 import com.chinatelecom.udp.core.datarouter.response.JsonResponse;
 import com.chinatelecom.udp.core.lang.json.JsonArray;
 import com.chinatelecom.udp.core.lang.json.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.*;
@@ -364,20 +374,21 @@ public class IntfSocService implements IWorkService {
         //入参校验
         Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
         //调用青藤云接口
-        JsonObject qty = new JsonObject();
-        JSONArray rows = (JSONArray) qty.get("rows");
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonStr = doPost("http://134.95.237.10:8976/QtyInformation/service/qtyInforservice/get_linux_account/0?seq=1",map.get("ip").toString(),1000);
+        JsonNode qty = mapper.readTree(jsonStr);
+        JsonNode rows = qty.get("rows");
 
         List<UserAccountInfo> userList = new ArrayList<>();
         for (int i = 0; i < rows.size(); i++) {
-            JSONObject row = (JSONObject)rows.get(i);
-
+            JsonNode row = rows.get(i);
             UserAccountInfo user = new UserAccountInfo();
-            user.setGroups(row.getAsString("groups"));
-            user.setName(row.getAsString("name"));
-            user.setStatus((Integer) row.get("status"));
-            user.setHome(row.getAsString("home"));
-            user.setLastLoginTime(row.getAsString("lastLoginTime"));
-            user.setLastLoginIp(row.getAsString("lastLoginTime"));
+            user.setGroups(row.get("groups").asText());
+            user.setName(row.get("name").asText());
+            user.setStatus(row.get("status").asInt());
+            user.setHome(row.get("home").asText());
+            user.setLastLoginTime(row.get("lastLoginTime").asText());
+            user.setLastLoginIp(row.get("lastLoginTime").asText());
             userList.add(user);
         }
 
@@ -398,22 +409,24 @@ public class IntfSocService implements IWorkService {
         //入参校验
         Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
         //调用青藤云接口
-        JsonObject qty = new JsonObject();
-        JSONArray rows = (JSONArray) qty.get("rows");
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonStr = doPost("http://134.95.237.10:8976/QtyInformation/service/qtyInforservice/get_linux_process/0?seq=1",map.get("ip").toString(),1000);
+        JsonNode qty = mapper.readTree(jsonStr);
+        JsonNode rows = qty.get("rows");
 
         List<ProcessInfo> processInfoList = new ArrayList<>();
         for (int i = 0; i < rows.size(); i++) {
             ProcessInfo processInfo = new ProcessInfo();
-            JSONObject row = (JSONObject) rows.get(i);
-            processInfo.setState(row.getAsString("state"));
-            processInfo.setGname(row.getAsString("gname"));
-            processInfo.setUname(row.getAsString("uname"));
-            processInfo.setPid((Integer) row.get("pid"));
-            processInfo.setPpid((Integer) row.get("ppid"));
-            processInfo.setPath(row.getAsString("path"));
-            processInfo.setStartArgs(row.getAsString("startArgs"));
-            processInfo.setStartTime(row.getAsString("startTime"));
-            processInfo.setRoot((Boolean) row.get("root") ?1:0);
+            JsonNode row = rows.get(i);
+            processInfo.setState(row.get("state").asText());
+            processInfo.setGname(row.get("gname").asText());
+            processInfo.setUname(row.get("uname").asText());
+            processInfo.setPid(row.get("pid").asInt());
+            processInfo.setPpid(row.get("ppid").asInt());
+            processInfo.setPath(row.get("path").asText());
+            processInfo.setStartArgs(row.get("startArgs").asText());
+            processInfo.setStartTime(row.get("startTime").asText());
+            processInfo.setRoot(row.get("root").asBoolean()?1:0);
             processInfoList.add(processInfo);
         }
 
@@ -427,6 +440,44 @@ public class IntfSocService implements IWorkService {
         WebContextHolder.getLoginUserInfo();
       return  ip.split(",");
     }
+
+    //调用青藤云接口
+    private String doPost(String url, String params, Integer timeout) throws SocketTimeoutException {
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse response = null;
+        String result = null;
+        try {
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).build();
+            httpClient = HttpClients.createDefault();
+
+            HttpPost post = new HttpPost(url);
+            post.setConfig(requestConfig);
+            // TODO contentType改为application/x-www-form-urlencoded 就能调用interface传参了
+            post.setHeader("Content-Type", "application/json; charset=UTF-8");
+            post.setEntity(new StringEntity(params, "UTF-8"));
+            response = httpClient.execute(post);
+            result = EntityUtils.toString(response.getEntity(), "UTF-8");
+        } catch (SocketTimeoutException e) {
+            throw e;
+        } catch (Exception e) {
+            result = "{\"RESULTCODE\": \"1111\",\"RESULTDESC\": \"调用接口超时\"}";
+            logger.error("调用接口失败...", e);
+        } finally {
+            try {
+                if (response != null) {
+                    response.close();
+                }
+                if (httpClient != null) {
+                    httpClient.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return result;
+    }
+
     @Override
     public String getCode() {
         return "intfSocService";
