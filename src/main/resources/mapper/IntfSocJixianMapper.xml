@@ -7,22 +7,22 @@
         select count(1)
         from intf_soc_jixian jixian
                  join intf_soc_itzichan it on jixian.asset_id = it.asset_id
-        where it.dcn_ip = #{}
+        where it.dcn_ip = #{ip}
     </select>
 
     <select id="getCount" resultType="java.lang.Long">
         select count(1)
         from intf_soc_jixian jixian
         join intf_soc_itzichan it on jixian.asset_id = it.asset_id
-        where it.dcn_ip = #{}
-        and jixian.item_result = #{}
+        where it.dcn_ip = #{ip}
+        and jixian.item_result = #{passNum}
     </select>
 
     <select id="noPassList" resultType="com.chinatelecom.operations.aqmhserivce.entity.IntfSocJixian">
         select jixian.item_name,jixian.item_result,jixian.point_name,jixian.point_result,jixian.check_time
         from intf_soc_jixian jixian
         join intf_soc_itzichan it on jixian.asset_id = it.asset_id
-        where it.dcn_ip = #{}
-        and jixian.point_result = '2'
+        where it.dcn_ip = #{ip}
+        and jixian.point_result = '2' order by jixian.item_name
     </select>
 </mapper>
