@@ -25,4 +25,19 @@
         where it.dcn_ip = #{ip}
         and jixian.point_result = '2' order by jixian.item_name
     </select>
+
+
+    <select id="getUserAccountInfo" resultType="com.chinatelecom.operations.aqmhserivce.entity.AccountInfor">
+        select groups,name,status,home,toString(last_login_time) as last_login_time,last_login_ip
+        from account_infor
+        where connection_ip = #{ip}
+        and status = 1
+    </select>
+
+    <select id="getProcessInfo" resultType="com.chinatelecom.operations.aqmhserivce.entity.ProcessInfor">
+        select state,gname,uname,pid,ppid,path,start_args,toString(start_time) as start_time,root
+        from process_infor
+        where connection_ip = #{ip}
+    </select>
+
 </mapper>

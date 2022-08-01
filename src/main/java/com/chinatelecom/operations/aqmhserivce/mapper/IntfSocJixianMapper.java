@@ -1,7 +1,10 @@
 package com.chinatelecom.operations.aqmhserivce.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.chinatelecom.operations.aqmhserivce.entity.AccountInfor;
 import com.chinatelecom.operations.aqmhserivce.entity.IntfSocJixian;
+import com.chinatelecom.operations.aqmhserivce.entity.ProcessInfor;
+import com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.UserAccountInfo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,4 +37,19 @@ public interface IntfSocJixianMapper extends BaseMapper<IntfSocJixian> {
      * @return
      */
     List<IntfSocJixian> noPassList(String ip);
+
+
+    /**
+     * 根据ip地址查询账户信息
+     * @param ip
+     * @return
+     */
+    List<AccountInfor> getUserAccountInfo(String ip);
+
+    /**
+     * 根据ip地址查询进程信息
+     * @param ip
+     * @return
+     */
+    List<ProcessInfor> getProcessInfo(String ip);
 }

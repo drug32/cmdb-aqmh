@@ -30,6 +30,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -353,85 +354,139 @@ public class IntfSocService implements IWorkService {
         //查询检查项通过的数量
         Long typePassCount = intfSocJixianMapper.getCount(map.get("ip").toString(),"1");
         jsonObject.put("failedCount",typeFailedCount);
-        // 创建一个数值格式化对象
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        // 设置精确到小数点后2位
-        numberFormat.setMaximumFractionDigits(2);
-        String passRate = numberFormat.format((float) typePassCount / (float) (typePassCount + typeFailedCount) * 100).concat("%");
+        float passRate = (float) typePassCount / (float) (typePassCount + typeFailedCount);
         jsonObject.put("passRate",passRate);
         return new JsonResponse(new JsonResult(jsonObject));
     }
 
-    /**
-     * 根据ip查询青藤云用户账号相关信息
-     * @param object
-     * @return
-     * @throws Exception
-     */
+    ///**
+    // * 根据ip查询青藤云用户账号相关信息
+    // * @param object
+    // * @return
+    // * @throws Exception
+    // */
+    //@ServiceMethodInfo(authentincation = false)
+    //public IDataResponse getUserAccountInfo(JsonObject object) throws Exception {
+    //    JsonObject jsonObject = new JsonObject();
+    //    //入参校验
+    //    Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
+    //    //调用青藤云接口
+    //    JsonObject request = new JsonObject();
+    //    request.put("ip",object.get("ip"));
+    //    ObjectMapper mapper = new ObjectMapper();
+    //    logger.info("调用接口开始...");
+    //    logger.info("调用参数为：【{}】",request);
+    //    String jsonStr = doPost("http://134.95.237.10:8976/QtyInformation/service/qtyInforservice/get_linux_account/0?seq=1",request,300*1000);
+    //    JsonNode qty = mapper.readTree(jsonStr);
+    //    JsonNode rows = qty.get("rows");
+    //
+    //    List<UserAccountInfo> userList = new ArrayList<>();
+    //    if(!rows.isNull()) {
+    //        for (int i = 0; i < rows.size(); i++) {
+    //            JsonNode row = rows.get(i);
+    //            UserAccountInfo user = new UserAccountInfo();
+    //            user.setGroups(row.get("groups").asText());
+    //            user.setName(row.get("name").asText());
+    //            user.setStatus(row.get("status").asInt());
+    //            user.setHome(row.get("home").asText());
+    //            user.setLastLoginTime(row.get("lastLoginTime").asText());
+    //            user.setLastLoginIp(row.get("lastLoginTime").asText());
+    //            userList.add(user);
+    //        }
+    //    }
+    //    jsonObject.put("total",userList.size());
+    //    jsonObject.put("data",userList);
+    //    return new JsonResponse(new JsonResult(jsonObject));
+    //}
+
+    ///**
+    // * 根据ip查询青藤云进程相关信息
+    // * @param object
+    // * @return
+    // * @throws Exception
+    // */
+    //@ServiceMethodInfo(authentincation = false)
+    //public IDataResponse getProcessInfo(JsonObject object) throws Exception {
+    //    JsonObject jsonObject = new JsonObject();
+    //    //入参校验
+    //    Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
+    //    //调用青藤云接口
+    //    JsonObject request = new JsonObject();
+    //    request.put("ip",object.get("ip"));
+    //    ObjectMapper mapper = new ObjectMapper();
+    //    logger.info("调用接口开始...");
+    //    logger.info("调用参数为：【{}】",request);
+    //    String jsonStr = doPost("http://134.95.237.10:8976/QtyInformation/service/qtyInforservice/get_linux_process/0",request,300*1000);
+    //    JsonNode qty = mapper.readTree(jsonStr);
+    //    JsonNode rows = qty.get("rows");
+    //
+    //    List<ProcessInfo> processInfoList = new ArrayList<>();
+    //    if(!rows.isNull()) {
+    //        for (int i = 0; i < rows.size(); i++) {
+    //            ProcessInfo processInfo = new ProcessInfo();
+    //            JsonNode row = rows.get(i);
+    //            processInfo.setState(row.get("state").asText());
+    //            processInfo.setGname(row.get("gname").asText());
+    //            processInfo.setUname(row.get("uname").asText());
+    //            processInfo.setPid(row.get("pid").asInt());
+    //            processInfo.setPpid(row.get("ppid").asInt());
+    //            processInfo.setPath(row.get("path").asText());
+    //            processInfo.setStartArgs(row.get("startArgs").asText());
+    //            processInfo.setStartTime(row.get("startTime").asText());
+    //            processInfo.setRoot(row.get("root").asBoolean()?1:0);
+    //            processInfoList.add(processInfo);
+    //        }
+    //    }
+    //    jsonObject.put("total",processInfoList.size());
+    //    jsonObject.put("data",processInfoList);
+    //    return new JsonResponse(new JsonResult(jsonObject));
+    //}
+
+
     @ServiceMethodInfo(authentincation = false)
     public IDataResponse getUserAccountInfo(JsonObject object) throws Exception {
         JsonObject jsonObject = new JsonObject();
         //入参校验
         Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
-        //调用青藤云接口
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonStr = doPost("http://134.95.237.10:8976/QtyInformation/service/qtyInforservice/get_linux_account/0?seq=1",map.get("ip").toString(),1000);
-        JsonNode qty = mapper.readTree(jsonStr);
-        JsonNode rows = qty.get("rows");
-
-        List<UserAccountInfo> userList = new ArrayList<>();
-        for (int i = 0; i < rows.size(); i++) {
-            JsonNode row = rows.get(i);
-            UserAccountInfo user = new UserAccountInfo();
-            user.setGroups(row.get("groups").asText());
-            user.setName(row.get("name").asText());
-            user.setStatus(row.get("status").asInt());
-            user.setHome(row.get("home").asText());
-            user.setLastLoginTime(row.get("lastLoginTime").asText());
-            user.setLastLoginIp(row.get("lastLoginTime").asText());
-            userList.add(user);
+        List<AccountInfor> accountInforList = intfSocJixianMapper.getUserAccountInfo(map.get("ip").toString());
+        List<UserAccountInfo> list = new ArrayList<>();
+        for(AccountInfor a : accountInforList) {
+            UserAccountInfo userAccountInfo = new UserAccountInfo();
+            userAccountInfo.setGroups(a.getGroups());
+            userAccountInfo.setName(a.getName());
+            userAccountInfo.setStatus(a.getStatus());
+            userAccountInfo.setHome(a.getHome());
+            userAccountInfo.setLastLoginTime(a.getLastLoginTime());
+            userAccountInfo.setLastLoginIp(a.getLastLoginIp());
+            list.add(userAccountInfo);
         }
-
-        jsonObject.put("total",userList.size());
-        jsonObject.put("data",userList);
+        jsonObject.put("total",list.size());
+        jsonObject.put("data",list);
         return new JsonResponse(new JsonResult(jsonObject));
     }
 
-    /**
-     * 根据ip查询青藤云进程相关信息
-     * @param object
-     * @return
-     * @throws Exception
-     */
     @ServiceMethodInfo(authentincation = false)
     public IDataResponse getProcessInfo(JsonObject object) throws Exception {
         JsonObject jsonObject = new JsonObject();
         //入参校验
         Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
-        //调用青藤云接口
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonStr = doPost("http://134.95.237.10:8976/QtyInformation/service/qtyInforservice/get_linux_process/0?seq=1",map.get("ip").toString(),1000);
-        JsonNode qty = mapper.readTree(jsonStr);
-        JsonNode rows = qty.get("rows");
-
-        List<ProcessInfo> processInfoList = new ArrayList<>();
-        for (int i = 0; i < rows.size(); i++) {
+        List<ProcessInfor> processInfoList = intfSocJixianMapper.getProcessInfo(map.get("ip").toString());
+        List<ProcessInfo> list = new ArrayList<>();
+        for(ProcessInfor p : processInfoList) {
             ProcessInfo processInfo = new ProcessInfo();
-            JsonNode row = rows.get(i);
-            processInfo.setState(row.get("state").asText());
-            processInfo.setGname(row.get("gname").asText());
-            processInfo.setUname(row.get("uname").asText());
-            processInfo.setPid(row.get("pid").asInt());
-            processInfo.setPpid(row.get("ppid").asInt());
-            processInfo.setPath(row.get("path").asText());
-            processInfo.setStartArgs(row.get("startArgs").asText());
-            processInfo.setStartTime(row.get("startTime").asText());
-            processInfo.setRoot(row.get("root").asBoolean()?1:0);
-            processInfoList.add(processInfo);
+            processInfo.setState(p.getState());
+            processInfo.setGname(p.getGname());
+            processInfo.setUname(p.getUname());
+            processInfo.setPid(p.getPid());
+            processInfo.setPpid(Integer.valueOf(p.getPpid()));
+            processInfo.setPath(p.getPath());
+            processInfo.setStartArgs(p.getStartArgs());
+            processInfo.setStartTime(p.getStartTime());
+            processInfo.setRoot("true".equals(p.getRoot())?1:0);
+            list.add(processInfo);
         }
-
-        jsonObject.put("total",processInfoList.size());
-        jsonObject.put("data",processInfoList);
+        jsonObject.put("total",list.size());
+        jsonObject.put("data",list);
         return new JsonResponse(new JsonResult(jsonObject));
     }
 
@@ -442,7 +497,7 @@ public class IntfSocService implements IWorkService {
     }
 
     //调用青藤云接口
-    private String doPost(String url, String params, Integer timeout) throws SocketTimeoutException {
+    private String doPost(String url, JsonObject params, Integer timeout) throws SocketTimeoutException {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
         String result = null;
@@ -454,8 +509,8 @@ public class IntfSocService implements IWorkService {
             HttpPost post = new HttpPost(url);
             post.setConfig(requestConfig);
             // TODO contentType改为application/x-www-form-urlencoded 就能调用interface传参了
-            post.setHeader("Content-Type", "application/json; charset=UTF-8");
-            post.setEntity(new StringEntity(params, "UTF-8"));
+            post.setHeader("Content-Type", "application/json");
+            post.setEntity(new StringEntity(params.toString(), "UTF-8"));
             response = httpClient.execute(post);
             result = EntityUtils.toString(response.getEntity(), "UTF-8");
         } catch (SocketTimeoutException e) {
