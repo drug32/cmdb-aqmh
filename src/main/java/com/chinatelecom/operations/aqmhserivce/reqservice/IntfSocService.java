@@ -82,6 +82,8 @@ public class IntfSocService implements IWorkService {
     private RegistrationRecordService registrationRecordService;
     @Autowired
     private IntfSocJixianMapper intfSocJixianMapper;
+    @Autowired
+    private TsMessageMapper tsMessageMapper;
 
     /** @Author 孙虎
      * @Description //获取某个系统的相关信息
@@ -354,7 +356,10 @@ public class IntfSocService implements IWorkService {
         //查询检查项通过的数量
         Long typePassCount = intfSocJixianMapper.getCount(map.get("ip").toString(),"1");
         jsonObject.put("failedCount",typeFailedCount);
-        float passRate = (float) typePassCount / (float) (typePassCount + typeFailedCount);
+        float passRate = 0.0f;
+        if(typePassCount + typeFailedCount != 0) {
+            passRate = (float) typePassCount / (float) (typePassCount + typeFailedCount);
+        }
         jsonObject.put("passRate",passRate);
         return new JsonResponse(new JsonResult(jsonObject));
     }
@@ -488,6 +493,21 @@ public class IntfSocService implements IWorkService {
         jsonObject.put("total",list.size());
         jsonObject.put("data",list);
         return new JsonResponse(new JsonResult(jsonObject));
+    }
+
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getTsMessageInfo(String deptId) throws Exception {
+        JsonObject object = new JsonObject();
+        //查询昨天的所有攻击数
+        long lastOneDayAllCount = tsMessageMapper.lastOneDayAllCount();
+        //查询某个部门昨天的受攻击数
+        Long oneDayDeptCount = tsMessageMapper.lastOneDayDeptCount(deptId);
+        //查询某个部门前天的受攻击数
+        Long twoDayDeptCount = tsMessageMapper.lastTwoDayDeptCount(deptId);
+        object.put("lastOneDayAllCount",lastOneDayAllCount);
+        object.put("oneDayDeptCount",oneDayDeptCount);
+        object.put("twoDayDeptCount",twoDayDeptCount);
+        return new JsonResponse(new JsonResult(object));
     }
 
 
