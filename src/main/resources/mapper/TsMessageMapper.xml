@@ -14,10 +14,10 @@
     <select id="lastOneDayDeptCount" resultType="java.lang.Long">
         select sum(ts.occur_count)
         from ts_message ts
-        join intf_soc_ipzichan ip
-        on ts.asset_id = ip.asset_id
-        and ip.dept_id = #{deptId}
-        and start_time
+        join intf_soc_itzichan it
+        on ts.destination_ip = it.mgmt_ip
+        and it.dept_org_id = #{deptId}
+        and ts.start_time
         between toString(today() - 1)
         and toString(today())
     </select>
@@ -25,15 +25,12 @@
     <select id="lastTwoDayDeptCount" resultType="java.lang.Long">
         select sum(ts.occur_count)
         from ts_message ts
-        join intf_soc_ipzichan ip
-        on ts.asset_id = ip.asset_id
-        and ip.dept_id = #{deptId}
-        and start_time
+        join intf_soc_itzichan it
+        on ts.destination_ip = it.mgmt_ip
+        and it.dept_org_id = #{deptId}
+        and ts.start_time
         between toString(today() - 2)
         and toString(today() - 1)
     </select>
-
-
-
 
 </mapper>

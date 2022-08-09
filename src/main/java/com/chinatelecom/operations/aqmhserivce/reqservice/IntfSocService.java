@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -347,6 +349,10 @@ public class IntfSocService implements IWorkService {
         Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
         //查询检查点不通过的项数
         List<IntfSocJixian> noPassList = intfSocJixianMapper.noPassList(map.get("ip").toString());
+        //新增日期格式转换
+        for(IntfSocJixian i : noPassList) {
+            i.setCheckTime(dateTransport(i.getCheckTime()));
+        }
         jsonObject.put("data",noPassList);
         //查询检查总量
         Long totalCount = intfSocJixianMapper.getAllAssetCount(map.get("ip").toString());
@@ -496,15 +502,22 @@ public class IntfSocService implements IWorkService {
     }
 
     @ServiceMethodInfo(authentincation = false)
-    public IDataResponse getTsMessageInfo(String deptId) throws Exception {
+    public IDataResponse getTsMessageAllInfo() throws Exception {
         JsonObject object = new JsonObject();
         //查询昨天的所有攻击数
         long lastOneDayAllCount = tsMessageMapper.lastOneDayAllCount();
+        object.put("lastOneDayAllCount",lastOneDayAllCount);
+        return new JsonResponse(new JsonResult(object));
+    }
+
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getTsMessageInfo(String deptId) throws Exception {
+        JsonObject object = new JsonObject();
         //查询某个部门昨天的受攻击数
         Long oneDayDeptCount = tsMessageMapper.lastOneDayDeptCount(deptId);
         //查询某个部门前天的受攻击数
         Long twoDayDeptCount = tsMessageMapper.lastTwoDayDeptCount(deptId);
-        object.put("lastOneDayAllCount",lastOneDayAllCount);
+
         object.put("oneDayDeptCount",oneDayDeptCount);
         object.put("twoDayDeptCount",twoDayDeptCount);
         return new JsonResponse(new JsonResult(object));
@@ -514,6 +527,24 @@ public class IntfSocService implements IWorkService {
     private String[] getIpSplit(String ip){
         WebContextHolder.getLoginUserInfo();
       return  ip.split(",");
+    }
+
+    /**
+     * 基线的日期格式转换
+     * @param date
+     * @return
+     */
+    private String dateTransport(String date) {
+        date = date.replace("th","");
+        SimpleDateFormat srcFormat = new SimpleDateFormat("yyyy-MMMM-dd HH:mm:ss", Locale.ENGLISH);
+        SimpleDateFormat destFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date parse = null;
+        try {
+            parse = srcFormat.parse(date);
+        } catch (ParseException e) {
+            logger.error("日期格式转换失败!",new RuntimeException("日期格式转换失败!"));
+        }
+        return destFormat.format(parse);
     }
 
     //调用青藤云接口
