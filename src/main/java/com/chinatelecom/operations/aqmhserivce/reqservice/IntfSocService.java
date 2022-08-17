@@ -157,11 +157,11 @@ public class IntfSocService implements IWorkService {
         List<OrgMachineNum> orgMachineNumList = intfSocDjxtMapper.getOrgMachineNum();
         //
         long jiXianAll = intfSocJixianService.count();
-        //系统总数
-        long systemCount = intfSocDjxtService.count();
         long jiXianSuccess = intfSocJixianService.count(new QueryWrapper<IntfSocJixian>().eq("item_result", "1"));
         // 创建一个数值格式化对象
         NumberFormat numberFormat = NumberFormat.getInstance();
+        //系统总数
+        long systemCount = intfSocDjxtService.count();
         // 设置精确到小数点后2位
         numberFormat.setMaximumFractionDigits(2);
         String result = numberFormat.format((float) jiXianSuccess / (float) jiXianAll * 100).concat("%");
@@ -523,8 +523,20 @@ public class IntfSocService implements IWorkService {
         return new JsonResponse(new JsonResult(object));
     }
 
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse testJava(String name) {
+        if(StringUtils.isNotEmpty(name)){
+            System.out.println("5666666");
+        }
+        if("aaa".contains(name)){
+            System.out.println("1111");
+        }
+        return new JsonResponse(new JsonResult());
+    }
 
-    private String[] getIpSplit(String ip){
+
+
+        private String[] getIpSplit(String ip){
         WebContextHolder.getLoginUserInfo();
       return  ip.split(",");
     }

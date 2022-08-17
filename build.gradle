@@ -32,6 +32,7 @@ dependencies {
             'com.chinatelecom.udp.core:embed-server:it.1.1.0',
             'com.chinatelecom.udp.core:websecurity-library:it.1.1.0',
             'commons-fileupload:commons-fileupload:1.4',
+            'com.chinatelecom.udp.core:key-library:it.1.1.0',
             'org.apache.tomcat.embed:tomcat-embed-websocket:10.0.11',
             'org.postgresql:postgresql:42.2.20',
             'xerces:xercesImpl:2.12.1',
