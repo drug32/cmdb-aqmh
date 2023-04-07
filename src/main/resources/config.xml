@@ -16,7 +16,7 @@
     </manager>
     <custom>
         <item namespace="com.chinatelecom.udp.core.dataaccess.redis.RedisCluster" name="redis" type="map">
-            <useredis value="2" type="int"/>
+            <useredis value="0" type="int"/>
             <nodes value="134.95.228.28:31062,134.95.228.59:31062"/>
             <password value="CMDB_CACHE_001#Cmdb!JLO!15"/>
         </item>
