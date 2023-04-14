@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chinatelecom.operations.aqmhserivce.mapper.IntfSocDjxtMapper">
+
+
+    <select id="getLoginTimes" resultType="com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.GetLoginTimes">
+        SELECT
+            ygygxz AS workPropName,
+            SUM (loginTimes) AS total
+        FROM
+            (
+                SELECT
+                    staffAccount,loginTimes,
+                    table2.ygygxz
+                FROM
+                    ( SELECT staff_account AS staffAccount, COUNT ( 1 ) AS loginTimes FROM tb_itm_tyrz_login_auth_log WHERE target_client_id =#{targetClientId} GROUP BY staff_account ) AS table1
+                        LEFT JOIN v_org_tree_all_staff_info table2 ON table1.staffAccount = table2.staffzh
+            ) AS table3 where ygygxz!=''
+        GROUP BY
+            ygygxz
+    </select>
+    <select id="getOrgMachineNum"
+            resultType="com.chinatelecom.operations.aqmhserivce.entity.mbresultentity.OrgMachineNum">
+        select dept_name as orgName,orgId, num from (select org_id as orgId ,count(1) as num  from intf_soc_itzichan
+        where org_id!='null' and category like '1%' GROUP BY org_id )
+       as table1 left join dept_info on table1.orgId=dept_info.dept_id  order by num desc
+    </select>
+</mapper>

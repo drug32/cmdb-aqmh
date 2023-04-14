@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chinatelecom.operations.aqmhserivce.mapper.TsMessageMapper">
+
+    <select id="lastOneDayAllCount" resultType="java.lang.Long">
+        select sum(occur_count)
+        from ts_message
+        where start_time
+        between toString(today() - 1)
+        and toString(today())
+    </select>
+
+    <select id="lastOneDayDeptCount" resultType="java.lang.Long">
+        select sum(ts.occur_count)
+        from ts_message ts
+        join intf_soc_itzichan it
+        on ts.destination_ip = it.mgmt_ip
+        and it.dept_org_id = #{deptId}
+        and ts.start_time
+        between toString(today() - 1)
+        and toString(today())
+    </select>
+
+    <select id="lastTwoDayDeptCount" resultType="java.lang.Long">
+        select sum(ts.occur_count)
+        from ts_message ts
+        join intf_soc_itzichan it
+        on ts.destination_ip = it.mgmt_ip
+        and it.dept_org_id = #{deptId}
+        and ts.start_time
+        between toString(today() - 2)
+        and toString(today() - 1)
+    </select>
+
+</mapper>

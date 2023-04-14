@@ -1,0 +1,164 @@
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'java-library'\r\napply plugin:  'application'\r\napply plugin: 'java'\r\n[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'\r\nsourceCompatibility = 16\r\nrepositories {\r\n    maven {\r\n        url \"https://maven.aliyun.com/repository/central\"\r\n    }\r\n    maven {\r\n        url \"http://134.64.116.90:8101/nexus/repository/Java4AhdxZZKF/\"\r\n        allowInsecureProtocol = true\r\n        credentials {\r\n            username \"devzzkf\"\r\n            password \"Dev2022!\"\r\n        }\r\n    }\r\n    maven {\r\n        url \"https://maven.aliyun.com/repository/jcenter\"\r\n    }\r\n}\r\napplication {\r\n    mainClassName = 'com.chinatelecom.operations.aqmhserivce.Server'\r\n    // applicationDefaultJvmArgs = ['--add-opens java.base/java.lang=ALL-UNNAMED']\r\n    applicationDefaultJvmArgs = ['--add-opens','java.base/java.lang=ALL-UNNAMED']\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation(\r\n            'com.ahchinatelecom.it:auth-library:1.1.0',\r\n            'com.chinatelecom.udp.core:embed-server:it.1.1.0',\r\n            'com.chinatelecom.udp.core:websecurity-library:it.1.1.0',\r\n            'commons-fileupload:commons-fileupload:1.4',\r\n            'org.apache.tomcat.embed:tomcat-embed-websocket:10.0.11',\r\n            'org.postgresql:postgresql:42.2.20',\r\n            'xerces:xercesImpl:2.12.1',\r\n            'org.apache.logging.log4j:log4j-api:2.17.0',\r\n            'org.apache.logging.log4j:log4j-core:2.17.0',\r\n            'org.aspectj:aspectjweaver:1.9.5',\r\n            'com.baomidou:mybatis-plus:3.5.0',\r\n            'org.springframework.data:spring-data-redis:2.5.2',\r\n            'commons-pool:commons-pool:1.5.1',\r\n            'com.baomidou:mybatis-plus-generator:3.5.0',\r\n            'org.apache.velocity:velocity-engine-core:2.3',\r\n            'org.apache.tinkerpop:tinkergraph-gremlin:3.3.3',\r\n            'org.apache.tinkerpop:gremlin-driver:3.3.3',\r\n            'org.apache.tinkerpop:gremlin-core:3.3.3',\r\n            'com.orientechnologies:orientdb-gremlin:3.2.3',\r\n            'com.clickhouse:clickhouse-jdbc:0.3.2-patch4'\r\n    )\r\n    annotationProcessor  'org.projectlombok:lombok:1.18.20'\r\n    compileOnly 'org.projectlombok:lombok:1.18.20'\r\n    testImplementation 'junit:junit:4.13'\r\n}\r\n\r\nconfigurations.all {\r\n    exclude group: 'cglib'\r\n}\r\n\r\ncompileJava {\r\n    options.compilerArgs << '-parameters'\r\n}\r\n\r\nprocessResources {\r\n    from ('src/main/webapp') {\r\n        into 'html'\r\n    }\r\n}\r\n\r\nversion='1.0'\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision 7c7bc15b4d0b72ce4b8660166c822df9cc73805f)
++++ b/build.gradle	(date 1658288289636)
+@@ -39,7 +39,6 @@
+             'org.apache.logging.log4j:log4j-core:2.17.0',
+             'org.aspectj:aspectjweaver:1.9.5',
+             'com.baomidou:mybatis-plus:3.5.0',
+-            'org.springframework.data:spring-data-redis:2.5.2',
+             'commons-pool:commons-pool:1.5.1',
+             'com.baomidou:mybatis-plus-generator:3.5.0',
+             'org.apache.velocity:velocity-engine-core:2.3',
+Index: src/main/resources/applicationContext.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<beans xmlns=\"http://www.springframework.org/schema/beans\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:aop=\"http://www.springframework.org/schema/aop\"\r\n\txmlns:context=\"http://www.springframework.org/schema/context\" xmlns:tx=\"http://www.springframework.org/schema/tx\" xmlns:redis=\"http://www.springframework.org/schema/redis\"\r\n\txsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd\r\n\t\thttp://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd\r\n\t\thttp://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd\r\n\t\thttp://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd\">\r\n\t<aop:aspectj-autoproxy expose-proxy=\"true\"/>\t\r\n    <bean name=\"dataSource_platform\" class=\"org.apache.tomcat.jdbc.pool.DataSource\">\r\n\t\t<property name=\"driverClassName\" value=\"ru.yandex.clickhouse.ClickHouseDriver\" />\r\n\t\t<!--<property name=\"url\" value=\"jdbc:postgresql://134.95.224.203:18922/qysjhzkpiin\" />\r\n\t\t<property name=\"username\"><value>qysjhzkpiin</value></property>\r\n\t\t<property name=\"password\"><value>Qysjhzkpiin!@#123</value></property>-->\r\n\t\t<property name=\"url\" value=\"jdbc:clickhouse://134.95.237.10:8123/default\" />\r\n\t\t<property name=\"username\"><value>default</value></property>\r\n\t\t<property name=\"password\"><value>Irad173%</value></property>\r\n\t\t<property name=\"testWhileIdle\"><value>true</value></property>\r\n\t\t  <property name=\"validationInterval\"><value>60000</value></property>\r\n\t\t  <property name=\"validationQuery\"><value>select 1</value></property>\r\n\t\t  <property name=\"testOnBorrow\"><value>true</value></property>\r\n\t\t  <property name=\"initialSize\" value=\"1\"/>  \r\n\t\t  <property name=\"maxIdle\" value=\"20\"/>  \r\n\t\t  <property name=\"minIdle\" value=\"1\"/>  \r\n\t\t  <property name=\"maxActive\" value=\"20\"/>  \r\n\t\t  <property name=\"logValidationErrors\" value=\"true\"/>\r\n\t\t  <property name=\"removeAbandoned\" value=\"true\"/>\r\n\t\t  <property name=\"removeAbandonedTimeout\" value=\"120000\"/>\r\n\t\t  <property name=\"logAbandoned\" value=\"true\"/>\r\n\t\t  <property name=\"suspectTimeout\" value=\"30000\"/>\r\n    </bean>\r\n    <bean id=\"connectionFactory\" class=\"com.chinatelecom.udp.core.dataaccess.database.ConnectionFactory\">\r\n       <property name=\"DataSource\">  \r\n           <map>  \r\n               <entry key=\"default\" value-ref=\"dataSource_platform\">  \r\n               </entry>\r\n               <entry key=\"platform\" value-ref=\"dataSource_platform\">  \r\n               </entry>\r\n           </map>  \r\n       </property> \r\n   </bean>\r\n\t<!-- 配置事务管理器 -->\r\n<!--\t <bean id=\"transactionManagerDB\" class=\"org.springframework.jdbc.datasource.DataSourceTransactionManager\">\r\n\t\t<property name=\"dataSource\" ref=\"dataSource_platform\" />\r\n\t</bean>\r\n\t<tx:annotation-driven transaction-manager=\"transactionManagerDB\"/>-->\r\n    <bean id=\"schedulerFactoryBean\" class=\"org.springframework.scheduling.quartz.SchedulerFactoryBean\">\r\n    </bean>\r\n\t<context:component-scan\r\n\t\tbase-package=\"com.chinatelecom.udp com.ahchinatelecom.auth com.chinatelecom.operations.aqmhserivce\">\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.cmclient.entity.CMItem\"/>\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.userrights.entity.SystemInfo\"/>\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.userrights.entity.SystemMenuInfo\"/>\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.userrights.entity.SystemPageInfo\"/>\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.userrights.entity.SystemPageModuleInfo\"/>\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.userrights.entity.SystemPageResourceInfo\"/>\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.userrights.entity.SystemRoleInfo\"/>\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.userrights.entity.SystemUsersDataAreaInfo\"/>\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.userrights.entity.UserExtraInfo\"/>\r\n\t\t<context:exclude-filter type=\"assignable\" expression=\"com.chinatelecom.udp.core.userrights.entity.LoginUserInfo\"/>\r\n\t</context:component-scan>\r\n\t<!-- 集成mybatis-plus -->\r\n\r\n\t<bean id=\"sqlSessionFactoryBean\"\r\n\t\t  class=\"com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean\">\r\n\t\t<!-- 数据源 -->\r\n\t\t<property name=\"dataSource\" ref=\"dataSource_platform\"></property>\r\n\t\t<!-- 自动扫描Mapping.xml文件 -->\r\n\t\t<property name=\"mapperLocations\" value=\"classpath:mapper/*.xml\"/>\r\n\t\t<property name=\"configLocation\" value=\"classpath:mybatis-config.xml\"/>\r\n\t\t<property name=\"typeAliasesPackage\" value=\"com.chinatelecom.operations.aqmhserivce.entity\"></property>\r\n\t</bean>\r\n\t<!--配置逻辑删除-->\r\n\t<bean id=\"dbConfig\" class=\"com.baomidou.mybatisplus.core.config.GlobalConfig.DbConfig\">\r\n\t\t<property name=\"logicDeleteValue\" value=\"1\"/>\r\n\t\t<property name=\"logicNotDeleteValue\" value=\"0\"/>\r\n\t</bean>\r\n\r\n\t<!--\r\n    配置 mybatis 扫描 mapper 接口的路径\r\n    -->\r\n\t<bean class=\"org.mybatis.spring.mapper.MapperScannerConfigurer\">\r\n\t\t<!--注入sqlSessionFactoryBean-->\r\n\t\t<property name=\"sqlSessionFactoryBeanName\" value=\"sqlSessionFactoryBean\"></property>\r\n\t\t<!--要扫描的dao层包-->\r\n\t\t<property name=\"basePackage\"\r\n\t\t\t\t  value=\"com.chinatelecom.operations.aqmhserivce.mapper\"></property>\r\n\t</bean>\r\n\r\n\r\n\t<!-- 载入redis.properties,这里要特别注意，如果有多个properties文件，必须用逗号分开，不能写成两个 <context:property-placeholder/> -->\r\n\t<context:property-placeholder location=\"classpath:redis.properties\" />\r\n\t<!-- 配置JedisPoolConfig连接池-->\r\n\t<!-- redis连接池配置 -->\r\n\t<bean id=\"jedisPoolConfig\" class=\"redis.clients.jedis.JedisPoolConfig\">\r\n\t\t<!-- 最大连接数 -->\r\n\t\t<property name=\"maxTotal\" value=\"30\" />\r\n\t\t<!-- 最大空闲连接数 -->\r\n\t\t<property name=\"maxIdle\" value=\"10\" />\r\n\t\t<!-- 每次释放连接的最大数目 -->\r\n\t\t<property name=\"numTestsPerEvictionRun\" value=\"1024\" />\r\n\t\t<!-- 释放连接的扫描间隔（毫秒） -->\r\n\t\t<property name=\"timeBetweenEvictionRunsMillis\" value=\"30000\" />\r\n\t\t<!-- 连接最小空闲时间 -->\r\n\t\t<property name=\"minEvictableIdleTimeMillis\" value=\"1800000\" />\r\n\t\t<!-- 连接空闲多久后释放, 当空闲时间>该值 且 空闲连接>最大空闲连接数 时直接释放 -->\r\n\t\t<property name=\"softMinEvictableIdleTimeMillis\" value=\"10000\" />\r\n\t\t<!-- 获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1 -->\r\n\t\t<property name=\"maxWaitMillis\" value=\"1500\" />\r\n\t\t<!-- 在获取连接的时候检查有效性, 默认false -->\r\n\t\t<property name=\"testOnBorrow\" value=\"true\" />\r\n\t\t<!-- 在空闲时检查有效性, 默认false -->\r\n\t\t<property name=\"testWhileIdle\" value=\"true\" />\r\n\t\t<!-- 连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true -->\r\n\t\t<property name=\"blockWhenExhausted\" value=\"false\" />\r\n\t</bean>\r\n\t<!-- 配置jedis连接工厂 -->\r\n\t<bean id=\"jedisConnectionFactory\" class=\"org.springframework.data.redis.connection.jedis.JedisConnectionFactory\">\r\n\t\t<property name=\"hostName\" value=\"${spring.redis.host}\"/>\r\n\t\t<property name=\"port\" value=\"${spring.redis.port}\"/>\r\n\t\t<property name=\"password\" value=\"${spring.redis.password}\" />\r\n\t\t<property name=\"database\" value=\"${spring.redis.database}\"/>\r\n\t\t<property name=\"usePool\" value=\"true\"/>\r\n\t\t<constructor-arg name=\"poolConfig\" ref=\"jedisPoolConfig\"/>\r\n\t</bean>\r\n\t<!-- 配置RedisTemplate -->\r\n\t<bean id=\"stringRedisSerializer\" class=\"org.springframework.data.redis.serializer.StringRedisSerializer\" />\r\n\t<bean id=\"redisTemplate\" class=\"org.springframework.data.redis.core.RedisTemplate\" >\r\n\t\t<property name=\"connectionFactory\" ref=\"jedisConnectionFactory\" />\r\n\t\t<property name=\"keySerializer\" ref=\"stringRedisSerializer\" />\r\n\t\t<property name=\"hashKeySerializer\" ref=\"stringRedisSerializer\" />\r\n\t\t<property name=\"valueSerializer\" ref=\"stringRedisSerializer\" />\r\n\t\t<property name=\"hashValueSerializer\" ref=\"stringRedisSerializer\" />\r\n\t</bean>\r\n<aop:aspectj-autoproxy/>\r\n</beans>\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/applicationContext.xml b/src/main/resources/applicationContext.xml
+--- a/src/main/resources/applicationContext.xml	(revision 7c7bc15b4d0b72ce4b8660166c822df9cc73805f)
++++ b/src/main/resources/applicationContext.xml	(date 1658288799548)
+@@ -48,7 +48,7 @@
+     </bean>
+ 	<context:component-scan
+ 		base-package="com.chinatelecom.udp com.ahchinatelecom.auth com.chinatelecom.operations.aqmhserivce">
+-		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.cmclient.entity.CMItem"/>
++		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.cmclient.entity.CmItem"/>
+ 		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.userrights.entity.SystemInfo"/>
+ 		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.userrights.entity.SystemMenuInfo"/>
+ 		<context:exclude-filter type="assignable" expression="com.chinatelecom.udp.core.userrights.entity.SystemPageInfo"/>
+@@ -114,24 +114,7 @@
+ 		<!-- 连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true -->
+ 		<property name="blockWhenExhausted" value="false" />
+ 	</bean>
+-	<!-- 配置jedis连接工厂 -->
+-	<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+-		<property name="hostName" value="${spring.redis.host}"/>
+-		<property name="port" value="${spring.redis.port}"/>
+-		<property name="password" value="${spring.redis.password}" />
+-		<property name="database" value="${spring.redis.database}"/>
+-		<property name="usePool" value="true"/>
+-		<constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
+-	</bean>
+-	<!-- 配置RedisTemplate -->
+-	<bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+-	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" >
+-		<property name="connectionFactory" ref="jedisConnectionFactory" />
+-		<property name="keySerializer" ref="stringRedisSerializer" />
+-		<property name="hashKeySerializer" ref="stringRedisSerializer" />
+-		<property name="valueSerializer" ref="stringRedisSerializer" />
+-		<property name="hashValueSerializer" ref="stringRedisSerializer" />
+-	</bean>
++
+ <aop:aspectj-autoproxy/>
+ </beans>
+ 
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+new file mode 100644
+--- /dev/null	(date 1657603549424)
++++ b/.idea/compiler.xml	(date 1657603549424)
+@@ -0,0 +1,16 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <annotationProcessing>
++      <profile default="true" name="Default" enabled="true" />
++      <profile name="Gradle Imported" enabled="true">
++        <outputRelativeToContentRoot value="true" />
++        <processorPath useClasspath="false">
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.20/18bcea7d5df4d49227b4a0743a536208ce4825bb/lombok-1.18.20.jar" />
++        </processorPath>
++        <module name="cmdb-aqmh.main" />
++      </profile>
++    </annotationProcessing>
++    <bytecodeTargetLevel target="16" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+new file mode 100644
+--- /dev/null	(date 1653529323607)
++++ b/.idea/gradle.xml	(date 1653529323607)
+@@ -0,0 +1,21 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="41">
++  <component name="GradleMigrationSettings" migrationVersion="1" />
++  <component name="GradleSettings">
++    <option name="linkedExternalProjectsSettings">
++      <GradleProjectSettings>
++        <option name="delegatedBuild" value="true" />
++        <option name="testRunner" value="GRADLE" />
++        <option name="distributionType" value="LOCAL" />
++        <option name="externalProjectPath" value="$PROJECT_DIR$" />
++        <option name="gradleHome" value="$PROJECT_DIR$/../../gradle/gradle-7.3" />
++        <option name="modules">
++          <set>
++            <option value="$PROJECT_DIR$" />
++          </set>
++        </option>
++        <option name="resolveExternalAnnotations" value="false" />
++      </GradleProjectSettings>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+new file mode 100644
+--- /dev/null	(date 1653643253786)
++++ b/.idea/encodings.xml	(date 1653643253786)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
++    <file url="PROJECT" charset="UTF-8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: src/main/resources/config.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<config>\r\n    <application>\r\n        <name>none</name>\r\n        <netid>0</netid>\r\n        <manager>local</manager>\r\n    </application>\r\n    <manager name=\"local\">\r\n       \r\n    </manager>\r\n    <manager name=\"server\" token=\"HZwRet/NB7pk4+cubnMICA==\">\r\n        \t<servers>\r\n        \t    <server address=\"127.0.0.1\" port=\"7927\"/>\r\n        \t    <server address=\"127.0.0.1\" port=\"7927\"/>\r\n        \t</servers>\r\n    </manager>\r\n <!--   <custom>\r\n    \t   <item namespace=\"com.chinatelecom.udp.core.dataaccess.redis.RedisCluster\" name=\"redis\" type=\"map\">\r\n\t\t\t<useredis value=\"1\" type=\"int\"/>\r\n\t\t\t<nodes value=\"127.0.0.1:6380\"/>\r\n\t\t\t<password value=\"Dev2021@\"/>\r\n\t\t</item>\r\n    </custom>-->\r\n</config>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/config.xml b/src/main/resources/config.xml
+--- a/src/main/resources/config.xml	(revision 7c7bc15b4d0b72ce4b8660166c822df9cc73805f)
++++ b/src/main/resources/config.xml	(date 1658287572968)
+@@ -14,11 +14,11 @@
+         	    <server address="127.0.0.1" port="7927"/>
+         	</servers>
+     </manager>
+- <!--   <custom>
++   <custom>
+     	   <item namespace="com.chinatelecom.udp.core.dataaccess.redis.RedisCluster" name="redis" type="map">
+ 			<useredis value="1" type="int"/>
+ 			<nodes value="127.0.0.1:6380"/>
+ 			<password value="Dev2021@"/>
+ 		</item>
+-    </custom>-->
++    </custom>
+ </config>
+\ No newline at end of file

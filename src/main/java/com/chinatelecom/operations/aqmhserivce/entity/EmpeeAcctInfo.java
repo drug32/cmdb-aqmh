@@ -53,4 +53,15 @@ public class EmpeeAcctInfo {
     public void setWorkPropName(String workPropName) {
         this.workPropName = workPropName;
     }
+
+    @Override
+    public String toString() {
+        return "EmpeeAcctInfo{" +
+                "area='" + area + '\'' +
+                ", staffId='" + staffId + '\'' +
+                ", staffUuid='" + staffUuid + '\'' +
+                ", staffAccount='" + staffAccount + '\'' +
+                ", workPropName='" + workPropName + '\'' +
+                '}';
+    }
 }

@@ -3,6 +3,11 @@ apply plugin:  'application'
 apply plugin: 'java'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 sourceCompatibility = 16
+//全局范围变量
+ext {
+    devzzkfUsername="sunhu01"
+    devzzkfPassword="AKCp8nGQxwjyVhLUGtWhZd2o4vuE9xM7VhcESiuTamUdqb3ovj8msjBQKErZr6ixPpvGGHFzb"
+}
 repositories {
     maven {
         url "https://maven.aliyun.com/repository/central"
@@ -18,11 +23,20 @@ repositories {
     maven {
         url "https://maven.aliyun.com/repository/jcenter"
     }
+    maven {
+        url "https://artifact.srdcloud.cn/artifactory/unifiedplatform-release-gradle-local/"
+        credentials {
+            username devzzkfUsername
+            password devzzkfPassword
+        }
+    }
+    mavenCentral()
+
 }
 application {
     mainClassName = 'com.chinatelecom.operations.aqmhserivce.Server'
     // applicationDefaultJvmArgs = ['--add-opens java.base/java.lang=ALL-UNNAMED']
-    applicationDefaultJvmArgs = ['--add-opens','java.base/java.lang=ALL-UNNAMED']
+    applicationDefaultJvmArgs = ['--add-opens','java.base/java.lang=ALL-UNNAMED','-Dfile.encoding=UTF-8']
 }
 
 dependencies {
@@ -42,26 +56,24 @@ dependencies {
             'com.baomidou:mybatis-plus:3.5.0',
             'commons-pool:commons-pool:1.5.1',
             'com.baomidou:mybatis-plus-generator:3.5.0',
-            'org.apache.velocity:velocity-engine-core:2.3',
-            'org.apache.tinkerpop:tinkergraph-gremlin:3.3.3',
-            'org.apache.tinkerpop:gremlin-driver:3.3.3',
-            'org.apache.tinkerpop:gremlin-core:3.3.3',
-            'com.orientechnologies:orientdb-gremlin:3.2.3',
-            'com.clickhouse:clickhouse-jdbc:0.3.2-patch4'
+            'org.apache.velocity:velocity-engine-core:2.3'
     )
     annotationProcessor  'org.projectlombok:lombok:1.18.20'
     compileOnly 'org.projectlombok:lombok:1.18.20'
     testImplementation 'junit:junit:4.13'
 }
 
+//排除的jar包
 configurations.all {
     exclude group: 'cglib'
 }
 
+//编译时的参数
 compileJava {
     options.compilerArgs << '-parameters'
 }
 
+//复制文件到html
 processResources {
     from ('src/main/webapp') {
         into 'html'

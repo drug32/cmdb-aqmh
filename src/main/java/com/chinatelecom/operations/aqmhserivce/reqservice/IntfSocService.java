@@ -30,10 +30,10 @@ import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.awt.font.OpenType;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.sql.SQLException;
@@ -49,6 +49,8 @@ public class IntfSocService implements IWorkService {
     private final static Logger logger= LogManager.getLogger(IntfSocService.class);
     @Autowired
     private EmpeeAcctInfoService empeeAcctInfoService;
+    @Autowired
+    private IpCustomerMapper ipCustomerMapper;
     @Autowired
     private com.chinatelecom.operations.aqmhserivce.service.IntfSocDjxtService intfSocDjxtService;
     @Autowired
@@ -86,6 +88,8 @@ public class IntfSocService implements IWorkService {
     private IntfSocJixianMapper intfSocJixianMapper;
     @Autowired
     private TsMessageMapper tsMessageMapper;
+    @Autowired
+    private StudentMapper studentMapper;
 
     /** @Author 孙虎
      * @Description //获取某个系统的相关信息
@@ -103,7 +107,7 @@ public class IntfSocService implements IWorkService {
         IntfSocDjxt intfSocDjxt = intfSocDjxtList.get(0);
         JsonObject object = new JsonObject();
         //查询出指定业务系统的应用程序资产
-        long countForApp = intfSocItZichanService.count(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId).likeRight("category", "4"));
+        long countForApp = intfSocItZichanService.count(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId).likeRight("category", "4"));//like 4%
         //查询出指定业务系统的数据库资产
         long countForDb = intfSocItZichanService.count(new QueryWrapper<IntfSocItzichan>().eq("asset_group_id", sysId).likeRight("category", "403"));
         //查询出指定业务系统的主机资产
@@ -138,6 +142,35 @@ public class IntfSocService implements IWorkService {
         List<IntfSocDjxt> list = intfSocDjxtService.list(new QueryWrapper<IntfSocDjxt>().eq("company_id",orgId));
         return new JsonResponse(new JsonResult(list));
     }
+
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getEmpeeAcctInfoList(String orgId) throws DataException, IOException, SQLException {
+        logger.info("111111111111111111111");
+        long count = empeeAcctInfoService.count();
+        System.out.println(count);
+        List<EmpeeAcctInfo> list = empeeAcctInfoService.list();
+        for (EmpeeAcctInfo empeeAcctInfo : list) {
+            System.out.println(empeeAcctInfo);
+        }
+        return new JsonResponse(new JsonResult(list));
+    }
+    @ServiceMethodInfo(authentincation = false)
+    public IDataResponse getEmpeeAndStudentList(String orgId,JsonObject object) throws DataException, IOException, SQLException {
+        logger.info("111111111111111111111");
+        List<Student> list = studentMapper.getStudentAndEmpeeByAreas("中国");
+        for (Student student : list) {
+            System.out.println(student);
+        }
+        //入参校验
+        Map<String, Object> map = PageUtils.checkPageParams(object.toMap());
+
+        for (Map.Entry<String, Object> objectEntry : map.entrySet()) {
+            System.out.println(objectEntry.getKey()+":::"+objectEntry.getValue());
+        }
+        System.out.println("----------------"+orgId);
+        return new JsonResponse(new JsonResult(list));
+    }
+
 
 
     /** @Author 孙虎

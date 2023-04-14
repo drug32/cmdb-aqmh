@@ -21,8 +21,8 @@ public class MybatisGeneratorConfig {
         //内部会自行判断数据库类型
         DataSourceConfig.Builder dataSourceConfigBuilder = new DataSourceConfig
                 .Builder(
-                "jdbc:clickhouse://22.0.0.101:18666/aqmh",
-                "default","");
+                "jdbc:postgresql://127.0.0.1:5432/cmdb_db",
+                "postgres","root");
         /**
          * 全局配置
          */
@@ -31,7 +31,7 @@ public class MybatisGeneratorConfig {
         String projectPath = System.getProperty("user.dir");
         globalConfigBuilder.outputDir(projectPath + "/src/main/java");
         // 作者
-        globalConfigBuilder.author("SunHu");
+        globalConfigBuilder.author("YangXu");
         // 结束时是否打开文件夹
         globalConfigBuilder.openDir(false);
         // 是否覆盖旧的文件
@@ -47,7 +47,7 @@ public class MybatisGeneratorConfig {
         // 策略配置
         StrategyConfig.Builder strategyConfigBuilder = new StrategyConfig.Builder();
         // 设置需要映射的表名,字符串数组，可以生成多个表
-        strategyConfigBuilder.addInclude("intf_tsgz_alarm");
+        strategyConfigBuilder.addInclude("ip_customer");
         // 下划线转驼峰
         strategyConfigBuilder.entityBuilder().naming(NamingStrategy.underline_to_camel);
         strategyConfigBuilder.entityBuilder().columnNaming(NamingStrategy.underline_to_camel);
